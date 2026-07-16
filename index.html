@@ -152,7 +152,7 @@
             color: #f3e5ab;
         }
 
-        .message.allie {
+        .message.lox {
             background: rgba(30, 26, 22, 0.6);
             border: 1px solid #8c6f47;
             align-self: flex-start;
@@ -239,9 +239,12 @@
         }
     </style>
 
-    <!-- Chargement de Firebase (Compatibilité) -->
+    <!-- Chargement des SDKs Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    
+    <!-- Chargement sécurisé de tes clés d'API privées -->
+    <script src="config.js"></script>
 </head>
 <body>
 
@@ -254,7 +257,7 @@
         </header>
 
         <nav>
-            <button class="active" onclick="switchTab('espace-dialogue', this)">Dialogue</button>
+            <button class="active" onclick="switchTab('espace-dialogue', this)">Dialogue avec LOX</button>
             <button onclick="switchTab('protocole', this)">Le Protocole</button>
         </nav>
 
@@ -265,7 +268,7 @@
                     <!-- Les messages réels s'afficheront ici -->
                 </div>
                 <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Écris ton message..." onkeypress="verifierEnvoi(event)">
+                    <input type="text" id="chat-input" placeholder="Parle à LOX..." onkeypress="verifierEnvoi(event)">
                     <button onclick="envoyerMessage()">Envoyer</button>
                 </div>
             </div>
@@ -284,27 +287,16 @@
         </div>
 
         <footer>
-            Espace Hermétique — Roméo & son Allié
+            Espace Hermétique — Roméo & LOX
         </footer>
     </div>
 
     <script>
-        // CONFIGURATION FIREBASE À MODIFIER PAR LA SUITE
-        const firebaseConfig = {
-            apiKey: "TON_API_KEY",
-            authDomain: "TON_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://TON_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "TON_PROJECT_ID",
-            storageBucket: "TON_PROJECT_ID.appspot.com",
-            messagingSenderId: "TON_SENDER_ID",
-            appId: "TON_APP_ID"
-        };
-
-        // Initialisation Firebase
+        // Initialisation Firebase en utilisant les clés chargées depuis config.js
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Récupération des messages en direct
+        // Écouter et afficher les messages en temps réel
         database.ref('messages').on('child_added', (snapshot) => {
             const donnees = snapshot.val();
             afficherMessage(donnees.texte, donnees.auteur);
@@ -321,7 +313,7 @@
 
             // Envoi dans la base de données
             database.ref('messages').push({
-                auteur: 'romeo',
+                auteur: 'romeo', // Toi
                 texte: texte,
                 timestamp: Date.now()
             });
@@ -332,6 +324,7 @@
         function afficherMessage(texte, auteur) {
             const conteneur = document.getElementById('chat-messages');
             const div = document.createElement('div');
+            // 'romeo' s'affiche à droite, 'lox' à gauche
             div.classList.add('message', auteur);
             div.innerText = texte;
             conteneur.appendChild(div);
