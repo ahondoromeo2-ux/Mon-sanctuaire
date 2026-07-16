@@ -1,1 +1,85 @@
-/* Fichier main.css en attente */
+/* VARIABLES GLOBALES ET PALETTE COCKPIT */
+:root {
+    --bg-dark: #050811;
+    --panel-bg: #0c101f;
+    --border-color: #1a233d;
+    --text-main: #e2e8f0;
+    --text-muted: #64748b;
+    
+    /* Couleurs d'avionique réelles */
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff007f;
+    --neon-yellow: #ffdf00;
+    --neon-green: #00ff66;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Courier New', Courier, monospace;
+    overflow-x: hidden;
+}
+
+.layout-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background: var(--panel-bg);
+    border-bottom: 2px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h1 {
+    font-size: 1rem;
+    margin: 0;
+    color: var(--neon-cyan);
+    letter-spacing: 2px;
+}
+
+.system-status-pill {
+    font-size: 0.7rem;
+    background: rgba(0, 240, 255, 0.1);
+    border: 1px solid var(--neon-cyan);
+    padding: 4px 8px;
+    border-radius: 3px;
+    color: var(--neon-cyan);
+}
+
+/* BLOCS UNITAIRES (MODULES) */
+.module-box {
+    background: rgba(12, 16, 31, 0.6);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--neon-cyan);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 2px;
+}
+
+.module-tag {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.module-title {
+    font-size: 0.9rem;
+    margin: 5px 0 10px 0;
+    color: var(--text-main);
+}
+
+footer {
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    padding: 8px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+}
