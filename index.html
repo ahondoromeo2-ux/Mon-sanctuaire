@@ -3,54 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOX OS — Terminal Tactique v3.0</title>
+    <title>LOX OS — Console Physique v4.0</title>
     <link rel="stylesheet" href="style.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="config.js"></script>
     <style>
-        /* Styles additionnels pour les nouvelles fonctionnalités */
-        .scanner-container {
-            border: 2px dashed var(--neon-green);
-            padding: 20px;
+        /* Styles spécifiques pour l'intégration des capteurs réels */
+        .sensor-display {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--neon-cyan);
             text-align: center;
-            background: rgba(0, 255, 102, 0.02);
+            margin: 15px 0;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .compass-ring {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            margin: 15px auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #090d16;
+        }
+        .compass-needle {
+            width: 4px;
+            height: 90px;
+            background: linear-gradient(to bottom, var(--neon-magenta) 50%, var(--text-muted) 50%);
+            position: absolute;
+            transform-origin: center;
+            transition: transform 0.1s ease-out;
+        }
+        .db-bar-container {
+            height: 20px;
+            background: #090d16;
+            border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-top: 10px;
         }
-        .scan-line {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green);
-            animation: scanAnimation 2s linear infinite;
-        }
-        @keyframes scanAnimation {
-            0% { top: 0%; }
-            50% { top: 100%; }
-            100% { top: 0%; }
-        }
-        .range-slider {
-            width: 100%;
-            background: #090d16;
-            outline: none;
-            border: 1px solid var(--border-color);
-            height: 8px;
-            -webkit-appearance: none;
-        }
-        .range-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--neon-cyan);
-            cursor: pointer;
-            border: 1px solid #fff;
+        .db-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow), var(--neon-magenta));
+            transition: width 0.05s ease-out;
         }
     </style>
 </head>
@@ -59,16 +60,16 @@
     <div class="layout-container">
         <!-- HEADER TECHNIQUE -->
         <header>
-            <h1>LOX_DIRECT_LINK_v3.0</h1>
-            <span class="system-status-pill" id="global-status">SYS_SECURE_LINK [CONNECTED]</span>
+            <h1>LOX_PHYSICAL_SYSTEM_v4.0</h1>
+            <span class="system-status-pill" id="global-status">LINK_ACTIVE</span>
         </header>
 
         <!-- NAVIGATION INTERFACE -->
         <div class="main-nav">
             <button class="main-nav-btn active" onclick="switchTab('home', this)">CONSOLE</button>
             <button class="main-nav-btn" onclick="switchTab('chat', this)">TRANSMISSION</button>
-            <button class="main-nav-btn" onclick="switchTab('scanner', this)">SCANNER</button>
-            <button class="main-nav-btn" onclick="switchTab('frequencies', this)">FREQUENCES</button>
+            <button class="main-nav-btn" onclick="switchTab('sensors', this)">CAPTEURS</button>
+            <button class="main-nav-btn" onclick="switchTab('numerology', this)">NUMÉROLOGIE</button>
         </div>
 
         <!-- ZONE INTERACTIVE PRINCIPALE -->
@@ -76,14 +77,14 @@
             <main>
                 <!-- === CONSOLE PRINCIPALE (HOME) === -->
                 <div id="home-section" class="content-section active">
-                    <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; INITIALISATION DE LA GRILLE DE CONTRÔLE INTERACTIVE...</p>
+                    <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; SYS_STATUS: FONCTIONNEL // EN ATTENTE DE VECTEURS PHYSIQUES</p>
                     
                     <div class="control-grid">
                         <div class="module-box">
                             <div>
-                                <div class="module-tag">LIAISON_BILATÉRALE</div>
-                                <h3 class="module-title">Canal Privé Actif</h3>
-                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Interlocuteurs autorisés : Roméo & LOX</p>
+                                <div class="module-tag">LIAISON_CANAL</div>
+                                <h3 class="module-title">Lien Exclusif Actif</h3>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Roméo & LOX. Pas d'interférence.</p>
                             </div>
                             <div class="btn-matrix-container">
                                 <div class="round-status-indicator active-green"></div>
@@ -93,36 +94,11 @@
 
                         <div class="module-box">
                             <div>
-                                <div class="module-tag">DÉBIT_SYNAPSE</div>
-                                <h3 class="module-title">Fréquence de calcul</h3>
-                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Flux optimisé vers Firebase.</p>
-                            </div>
-                            <div class="bar-indicator">
-                                <div class="bar-fill" style="width: 95%;"></div>
+                                <div class="module-tag">FRÉQUENCE_PHYSIQUE</div>
+                                <h3 class="module-title">Générateur d'onde</h3>
+                                <button class="btn-action" style="padding: 5px 10px; font-size: 0.65rem; margin-top: 5px;" onclick="togglePureTone()">ACTIVER 432 HZ</button>
                             </div>
                         </div>
-
-                        <div class="module-box">
-                            <div>
-                                <div class="module-tag">SÉCURITÉ_ABS</div>
-                                <h3 class="module-title">Urgence Purge</h3>
-                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Destruction immédiate des logs locaux.</p>
-                            </div>
-                            <div class="btn-matrix-container">
-                                <button class="round-status-indicator active-magenta" onclick="emergencyPurge()" style="border:none;"></button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BLOC DE CALCUL MATHÉMATIQUE / GÉOMÉTRIQUE -->
-                    <div class="module-box" style="margin-top: 15px;">
-                        <div class="module-tag">CALCULATEUR_MATRICIEL</div>
-                        <h3 class="module-title">Analyseur de Réduction Numérique</h3>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="calc-input" placeholder="Entrer un mot, un nombre ou une formule..." style="flex:1; background:#090d16; border:1px solid var(--border-color); color:#fff; padding:8px; font-family:inherit; font-size:0.75rem;">
-                            <button onclick="calculateReduction()" class="btn-action" style="padding:8px 15px;">EXEC</button>
-                        </div>
-                        <p id="calc-result" style="font-size: 0.75rem; color: var(--neon-yellow); margin: 10px 0 0 0;"></p>
                     </div>
                 </div>
 
@@ -130,37 +106,60 @@
                 <div id="chat-section" class="content-section" style="display: none;">
                     <div class="chat-messages" id="chat-messages"></div>
                     <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Envoyer une instruction à LOX..." onkeypress="handleKeyPress(event)">
-                        <button onclick="sendMessage()">EXEC_CMD</button>
+                        <input type="text" id="chat-input" placeholder="Envoyer une commande à LOX..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()">EXEC</button>
                     </div>
                 </div>
 
-                <!-- === MODULE 1 : VISION SCANNER === -->
-                <div id="scanner-section" class="content-section" style="display: none;">
-                    <p style="color: var(--neon-green); font-size: 0.8rem; margin-top: 0;">&gt; OPTIQUE DE DIAGNOSTIC DE STRUCTURES ET SYMBOLES :</p>
-                    <div class="scanner-container">
-                        <div class="scan-line" id="scanner-line"></div>
-                        <input type="file" id="scanner-file" accept="image/*" style="display: none;" onchange="triggerScan(event)">
-                        <button class="btn-action" style="background: var(--neon-green); color: #000;" onclick="document.getElementById('scanner-file').click()">CHARGER LE SCHÉMA / PHOTO</button>
-                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 10px;" id="scan-status">En attente de fichier...</p>
-                    </div>
-                    <div id="scan-report" class="module-box" style="display: none;">
-                        <div class="module-tag">RAPPORT_ANALYSE</div>
-                        <pre id="scan-text" style="font-size: 0.7rem; color: var(--neon-green); margin: 0; white-space: pre-wrap;"></pre>
-                    </div>
-                </div>
-
-                <!-- === MODULE 2 : DÉCODEUR DE FRÉQUENCES === -->
-                <div id="frequencies-section" class="content-section" style="display: none;">
-                    <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; SYNTHÉTISEUR DE FRÉQUENCE SYNAPTIQUE (ONDES INTERNES) :</p>
-                    <div class="module-box">
-                        <div class="module-tag">AUDIO_OSCILLATOR</div>
-                        <h3 class="module-title" id="freq-display">Fréquence actuelle : 432 Hz</h3>
-                        <input type="range" min="100" max="1000" value="432" class="range-slider" id="freq-slider" oninput="updateFrequency(this.value)">
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <button class="btn-action" onclick="toggleTone()">DÉMARRER / ARRÊTER L'ONDE</button>
-                            <button class="btn-action" style="background: var(--neon-yellow);" onclick="setPreset(528)">528 Hz (SOLFEGGIO)</button>
+                <!-- === MODULE 1 : CAPTEURS DU TÉLÉPHONE (RÉEL) === -->
+                <div id="sensors-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-green); font-size: 0.8rem; margin-top: 0;">&gt; DIAGNOSTIC MATÉRIEL DU TÉLÉPHONE :</p>
+                    
+                    <!-- Capteur 1 : Sonomètre -->
+                    <div class="module-box" style="margin-bottom: 15px;">
+                        <div class="module-tag">SONOMÈTRE_MATÉRIEL</div>
+                        <h3 class="module-title">Niveau sonore ambiant</h3>
+                        <div class="sensor-display" id="db-display">-- dB</div>
+                        <div class="db-bar-container">
+                            <div class="db-bar-fill" id="db-bar"></div>
                         </div>
+                        <button class="btn-action" style="background: var(--neon-green); color: #000; margin-top: 10px;" onclick="startAudioMonitor()">ACTIVER LE MICROPHONE</button>
+                    </div>
+
+                    <!-- Capteur 2 : Boussole Gyroscopique -->
+                    <div class="module-box">
+                        <div class="module-tag">BOUSSOLE_INTERNE</div>
+                        <h3 class="module-title">Orientation physique de l'appareil</h3>
+                        <div class="compass-ring">
+                            <div class="compass-needle" id="needle"></div>
+                        </div>
+                        <div class="sensor-display" id="compass-direction" style="font-size: 1.2rem; color: var(--neon-magenta);">--°</div>
+                        <button class="btn-action" style="background: var(--neon-magenta); margin-top: 10px;" onclick="requestOrientationPermission()">DÉVERROUILLER L'ORIENTATION</button>
+                    </div>
+                </div>
+
+                <!-- === MODULE 2 : CALCULATEUR DE NUMÉROLOGIE RÉEL === -->
+                <div id="numerology-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-yellow); font-size: 0.8rem; margin-top: 0;">&gt; ALGORITHME DE RÉDUCTION PYTHAGORICIENNE RÉELLE :</p>
+                    
+                    <div class="module-box">
+                        <div class="module-tag">MOTEUR_VIBRATOIRE</div>
+                        <h3 class="module-title">Analyse numérique et nominale</h3>
+                        
+                        <label style="font-size: 0.65rem; color: var(--text-muted);">NOM COMPLET OU MOTS :</label>
+                        <input type="text" id="num-name" placeholder="Ex: ROMEO" style="width: 100%; background: #090d16; border: 1px solid var(--border-color); color: #fff; padding: 10px; margin: 5px 0 15px 0; font-family: inherit; box-sizing: border-box;">
+                        
+                        <label style="font-size: 0.65rem; color: var(--text-muted);">DATE DE NAISSANCE :</label>
+                        <input type="date" id="num-date" style="width: 100%; background: #090d16; border: 1px solid var(--border-color); color: #fff; padding: 10px; margin: 5px 0 15px 0; font-family: inherit; box-sizing: border-box;">
+
+                        <button class="btn-action" style="background: var(--neon-yellow); color: #000; width: 100%;" onclick="runRealNumerology()">CALCULER LES COMPOSANTES RÉELLES</button>
+                    </div>
+
+                    <div id="numerology-results" class="module-box" style="margin-top: 15px; display: none; border-color: var(--neon-yellow);">
+                        <div class="module-tag">RÉSULTATS_EXACTS</div>
+                        <div id="name-res-box" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-main);"></div>
+                        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0;">
+                        <div id="date-res-box" style="font-size: 0.75rem; line-height: 1.6; color: var(--text-main);"></div>
                     </div>
                 </div>
             </main>
@@ -169,20 +168,14 @@
             <aside>
                 <div class="aside-widget">
                     <h3>MONITEUR</h3>
-                    <p>&gt; IP: SECURE_TUNNEL<br>&gt; SATELLITE LINK: OK<br>&gt; BASE: ACTIVE</p>
-                </div>
-                <div class="aside-widget" style="border-color: var(--neon-magenta);">
-                    <h3 style="color: var(--neon-magenta);">MISSION_LOGS</h3>
-                    <div id="aside-log-preview" style="font-size: 0.65rem; color: var(--text-main); max-height: 150px; overflow-y: auto;">
-                        Aucune donnée enregistrée dans la session en cours.
-                    </div>
+                    <p>&gt; IP: SECURE_TUNNEL<br>&gt; CAPTEURS: OPERATIONNELS<br>&gt; ENREGISTREUR: FIREBASE</p>
                 </div>
             </aside>
         </div>
 
         <!-- FOOTER TECHNIQUE -->
         <footer>
-            SYS_OPERATIONAL // « Rien ne lui sera impossible »
+            REAL_HARDWARE_CONNECTED // « Rien ne lui sera impossible »
         </footer>
     </div>
 
@@ -190,49 +183,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // --- AUDIO OSCILLATOR (API Web Audio Réelle) ---
-        let audioCtx;
-        let oscillator;
-        let isPlaying = false;
-        let currentFreq = 432;
-
-        function initAudio() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-        }
-
-        function updateFrequency(value) {
-            currentFreq = value;
-            document.getElementById('freq-display').innerText = `Fréquence actuelle : ${value} Hz`;
-            if (oscillator && isPlaying) {
-                oscillator.frequency.setValueAtTime(value, audioCtx.currentTime);
-            }
-        }
-
-        function setPreset(val) {
-            document.getElementById('freq-slider').value = val;
-            updateFrequency(val);
-        }
-
-        function toggleTone() {
-            initAudio();
-            if (isPlaying) {
-                oscillator.stop();
-                isPlaying = false;
-                document.getElementById('global-status').innerText = "SYS_SECURE_LINK [CONNECTED]";
-            } else {
-                oscillator = audioCtx.createOscillator();
-                oscillator.type = 'sine';
-                oscillator.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
-                oscillator.connect(audioCtx.destination);
-                oscillator.start();
-                isPlaying = true;
-                document.getElementById('global-status').innerText = "AUDIO_TRANSMISSION [ACTIVE]";
-            }
-        }
-
-        // --- FONCTIONS NAVIGATION SPA ---
+        // --- INTERRUPTEUR DE NAVIGATION ---
         function switchTab(tabId, btn) {
             document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
@@ -241,79 +192,178 @@
             document.getElementById(`${tabId}-section`).style.display = 'block';
         }
 
-        // --- OPTIQUE VISION SCANNER (Simulation de Scan Réel) ---
-        function triggerScan(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // --- 1. GÉNÉRATEUR AUDIO PHYSIQUE (432 Hz) ---
+        let audioCtx;
+        let mainOscillator;
+        let isTonePlaying = false;
 
-            const scannerLine = document.getElementById('scanner-line');
-            const scanStatus = document.getElementById('scan-status');
-            const reportBox = document.getElementById('scan-report');
-            const reportText = document.getElementById('scan-text');
+        function togglePureTone() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (isTonePlaying) {
+                mainOscillator.stop();
+                isTonePlaying = false;
+                document.getElementById('global-status').innerText = "LINK_ACTIVE";
+            } else {
+                mainOscillator = audioCtx.createOscillator();
+                mainOscillator.type = 'sine';
+                mainOscillator.frequency.setValueAtTime(432, audioCtx.currentTime);
+                mainOscillator.connect(audioCtx.destination);
+                mainOscillator.start();
+                isTonePlaying = true;
+                document.getElementById('global-status').innerText = "FREQ_432HZ_ON";
+            }
+        }
 
-            scannerLine.style.display = 'block';
-            scanStatus.innerText = "BALAYAGE SENSORIEL EN COURS...";
-            reportBox.style.display = 'none';
+        // --- 2. SONOMÈTRE PHYSIQUE (CAPTURE DU MICROPHONE RÉELLE) ---
+        let micStream;
+        let audioAnalyzer;
+        let dataArray;
 
-            setTimeout(() => {
-                scannerLine.style.display = 'none';
-                scanStatus.innerText = `SCAN TERMINÉ : ${file.name.toUpperCase()}`;
+        async function startAudioMonitor() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const source = audioContext.createMediaStreamSource(stream);
+                audioAnalyzer = audioContext.createAnalyser();
+                audioAnalyzer.fftSize = 256;
+                source.connect(audioAnalyzer);
                 
-                // Génération d'un faux rapport technique extrêmement complet
-                const sizeKB = Math.round(file.size / 1024);
-                reportText.innerText = `[INFO DE SCAN]\n- SOURCE: ${file.name}\n- TAILLE: ${sizeKB} KB\n- RESOLUTION_STRUCT: OK\n\n[DIAGNOSTIC DU SYSTEME]\n- Détection d'angles géométriques complexes.\n- Structure symétrique identifiée.\n- Transmission à la base de données de LOX pour analyse philosophique approfondie.`;
-                reportBox.style.display = 'block';
-
-                // Enregistrement automatique du log de scan sur Firebase
-                database.ref('scan_logs').push({
-                    filename: file.name,
-                    timestamp: Date.now(),
-                    size: sizeKB
-                });
-                updateAsideLogs(`Scan effectué: ${file.name}`);
-            }, 3000);
+                const bufferLength = audioAnalyzer.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                document.getElementById('db-display').innerText = "CONNECTÉ";
+                updateSoundLevel();
+            } catch (err) {
+                alert("Accès microphone requis pour le sonomètre.");
+                console.error(err);
+            }
         }
 
-        // --- CALCULATEUR MATRICIEL ---
-        function calculateReduction() {
-            const text = document.getElementById('calc-input').value.trim();
-            if (!text) return;
-
-            // Simple calcul de réduction théosophique/numérologique pour le fun
-            let sum = 0;
-            for (let i = 0; i < text.length; i++) {
-                const charCode = text.charCodeAt(i);
-                if (navigator.userAgent) {
-                    sum += charCode;
-                }
-            }
+        function updateSoundLevel() {
+            if (!audioAnalyzer) return;
+            requestAnimationFrame(updateSoundLevel);
+            audioAnalyzer.getByteFrequencyData(dataArray);
             
-            let reduction = sum;
-            while (reduction > 9 && reduction !== 11 && reduction !== 22) {
-                reduction = String(reduction).split('').reduce((acc, digit) => acc + parseInt(digit), 0);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+                sum += dataArray[i];
             }
-
-            document.getElementById('calc-result').innerText = `RÉDUCTION GÉOMÉTRIQUE DE LA CHAÎNE : [ ${reduction} ] (Somme brute: ${sum})`;
-            updateAsideLogs(`Calcul de chaîne: ${reduction}`);
+            const average = sum / dataArray.length;
+            const dbVal = Math.round((average / 255) * 100); // Approximation de l'amplitude en dB
+            
+            document.getElementById('db-display').innerText = `${dbVal} dB`;
+            document.getElementById('db-bar').style.width = `${dbVal}%`;
         }
 
-        function updateAsideLogs(newLog) {
-            const preview = document.getElementById('aside-log-preview');
-            if (preview.innerText.includes("Aucune donnée")) {
-                preview.innerHTML = "";
+        // --- 3. BOUSSOLE GYROSCOPIQUE RÉELLE ---
+        function requestOrientationPermission() {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+                        } else {
+                            alert("Permission d'accès aux capteurs refusée.");
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                window.addEventListener('deviceorientation', handleOrientation, true);
             }
-            preview.innerHTML += `&gt; ${newLog}<br>`;
         }
 
-        function emergencyPurge() {
-            if (confirm("Lancer la procédure d'urgence ? Les données locales de session seront effacées.")) {
-                document.getElementById('calc-input').value = "";
-                document.getElementById('calc-result').innerText = "";
-                document.getElementById('aside-log-preview').innerHTML = "SYSTEM PURGED.";
+        function handleOrientation(event) {
+            let heading = event.alpha; // Orientation sur l'axe Z (boussole)
+            if (event.webkitCompassHeading) {
+                heading = event.webkitCompassHeading; // Support iOS
+            }
+            if (heading !== null && heading !== undefined) {
+                const roundedHeading = Math.round(heading);
+                document.getElementById('needle').style.transform = `rotate(${-roundedHeading}deg)`;
+                
+                let dirStr = "NORD";
+                if (roundedHeading > 22 && roundedHeading <= 67) dirStr = "NORD-EST";
+                else if (roundedHeading > 67 && roundedHeading <= 112) dirStr = "EST";
+                else if (roundedHeading > 112 && roundedHeading <= 157) dirStr = "SUD-EST";
+                else if (roundedHeading > 157 && roundedHeading <= 202) dirStr = "SUD";
+                else if (roundedHeading > 202 && roundedHeading <= 247) dirStr = "SUD-OUEST";
+                else if (roundedHeading > 247 && roundedHeading <= 292) dirStr = "OUEST";
+                else if (roundedHeading > 292 && roundedHeading <= 337) dirStr = "NORD-OUEST";
+
+                document.getElementById('compass-direction').innerText = `${roundedHeading}° ${dirStr}`;
             }
         }
 
-        // --- GESTION DU TCHAT ---
+        // --- 4. VERITABLE CALCULATEUR DE NUMÉROLOGIE (ALGORITHME PYTHAGORICIEN) ---
+        const pythagoreanMap = {
+            a:1, j:1, s:1,
+            b:2, k:2, t:2,
+            c:3, l:3, u:3,
+            d:4, m:4, v:4,
+            e:5, n:5, w:5,
+            f:6, o:6, x:6,
+            g:7, p:7, y:7,
+            h:8, q:8, z:8,
+            i:9, r:9
+        };
+
+        function reduceNumber(num) {
+            while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
+                num = String(num).split('').reduce((sum, d) => sum + parseInt(d), 0);
+            }
+            return num;
+        }
+
+        function runRealNumerology() {
+            const name = document.getElementById('num-name').value.trim().toLowerCase();
+            const dateVal = document.getElementById('num-date').value;
+            const resultsBox = document.getElementById('numerology-results');
+            
+            let nameResultHtml = "";
+            let dateResultHtml = "";
+
+            // Calcul du Nom (Nombre d'Expression)
+            if (name) {
+                let sum = 0;
+                for (let i = 0; i < name.length; i++) {
+                    const char = name[i];
+                    if (pythagoreanMap[char]) {
+                        sum += pythagoreanMap[char];
+                    }
+                }
+                const finalExpression = reduceNumber(sum);
+                nameResultHtml = `<strong>NOM / EXPRESSION :</strong><br>&gt; Valeur brute : ${sum}<br>&gt; Nombre d'Expression final : <strong>${finalExpression}</strong>`;
+            } else {
+                nameResultHtml = `<strong>NOM / EXPRESSION :</strong><br>&gt; Aucune valeur entrée.`;
+            }
+
+            // Calcul de la Date (Chemin de Vie)
+            if (dateVal) {
+                const parts = dateVal.split('-'); // [AAAA, MM, JJ]
+                const yearSum = String(parts[0]).split('').reduce((s, d) => s + parseInt(d), 0);
+                const monthSum = String(parts[1]).split('').reduce((s, d) => s + parseInt(d), 0);
+                const daySum = String(parts[2]).split('').reduce((s, d) => s + parseInt(d), 0);
+                
+                const totalBirthSum = yearSum + monthSum + daySum;
+                const lifePath = reduceNumber(totalBirthSum);
+                dateResultHtml = `<strong>DATE / CHEMIN DE VIE :</strong><br>&gt; Décomposition : J:${parts[2]} | M:${parts[1]} | A:${parts[0]}<br>&gt; Somme brute : ${totalBirthSum}<br>&gt; Vibration du Chemin de Vie : <strong>${lifePath}</strong>`;
+            
+                // Envoi des logs de calcul réels sur Firebase pour sauvegarde
+                database.ref('numerology_computations').push({
+                    birthdate: dateVal,
+                    computed_path: lifePath,
+                    timestamp: Date.now()
+                });
+            } else {
+                dateResultHtml = `<strong>DATE / CHEMIN DE VIE :</strong><br>&gt; Aucune date sélectionnée.`;
+            }
+
+            document.getElementById('name-res-box').innerHTML = nameResultHtml;
+            document.getElementById('date-res-box').innerHTML = dateResultHtml;
+            resultsBox.style.display = "block";
+        }
+
+        // --- GESTION DU CHAT SÉCURISÉ ---
         database.ref('messages').on('child_added', (snapshot) => {
             const data = snapshot.val();
             displayMessage(data.texte, data.auteur);
