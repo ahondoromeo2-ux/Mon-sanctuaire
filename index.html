@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Sanctuaire — Bibliothèque Sacrée de LOX</title>
+    <title>Le Sanctuaire — Architecture Sacrée de LOX</title>
     <style>
         :root {
             --bg-color: #040306;
@@ -35,7 +35,6 @@
             padding: 20px;
         }
 
-        /* Conteneur Principal basé sur l'image */
         .layout-container {
             width: 100%;
             max-width: 1200px;
@@ -45,16 +44,14 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.8), 
-                0 0 30px rgba(168, 85, 247, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(168, 85, 247, 0.1);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
 
-        /* 1. En-tête (header) */
+        /* 1. HEADER */
         header {
-            padding: 25px 20px;
+            padding: 20px;
             text-align: center;
             border-bottom: 1px solid var(--border-color);
             background: rgba(6, 5, 8, 0.5);
@@ -63,97 +60,113 @@
         header h1 {
             margin: 0;
             font-family: 'Times New Roman', Times, serif;
-            font-size: 1.8rem;
-            font-weight: 300;
-            letter-spacing: 6px;
+            font-size: 1.6rem;
+            letter-spacing: 5px;
             color: var(--accent-gold);
-            text-shadow: 0 0 15px var(--accent-glow);
             text-transform: uppercase;
         }
 
         header p {
-            margin: 8px 0 0 0;
-            font-size: 0.75rem;
+            margin: 5px 0 0 0;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
 
-        /* 2. Navigation (nav) */
-        nav {
-            background-color: rgba(6, 5, 8, 0.8);
+        /* 2. NAVIGATION PRINCIPALE (Arborescence Niveau 1) */
+        .main-nav {
+            background-color: rgba(6, 5, 8, 0.9);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: center;
-            gap: 10px;
-            padding: 12px;
-            flex-wrap: wrap;
+            gap: 15px;
+            padding: 10px;
         }
 
-        .nav-btn {
+        .main-nav-btn {
             background: transparent;
-            border: 1px solid rgba(212, 175, 55, 0.15);
+            border: 1px solid transparent;
             color: var(--text-muted);
             padding: 10px 20px;
-            border-radius: 6px;
             cursor: pointer;
             font-size: 0.8rem;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
             font-weight: bold;
-            transition: all 0.3s ease;
             font-family: inherit;
+            transition: all 0.3s;
         }
 
-        .nav-btn:hover {
-            color: var(--text-main);
-            border-color: var(--neon-violet);
-            background-color: rgba(168, 85, 247, 0.05);
-        }
-
-        .nav-btn.active {
+        .main-nav-btn.active {
             color: var(--accent-gold);
-            border-color: var(--accent-gold);
-            background-color: rgba(212, 175, 55, 0.04);
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+            border-bottom: 2px solid var(--accent-gold);
         }
 
-        /* Zone centrale : Division entre Main et Aside */
+        /* 3. NAVIGATION SECONDAIRE (Arborescence Niveau 2) */
+        .sub-nav {
+            background-color: rgba(12, 10, 16, 0.6);
+            border-bottom: 1px solid var(--border-color);
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            padding: 8px;
+        }
+
+        .sub-nav.active {
+            display: flex;
+        }
+
+        .sub-nav-btn {
+            background: rgba(168, 85, 247, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .sub-nav-btn.active {
+            color: #040306;
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* ZONE DU MILIEU (CONTENU + BARRE COMPLÉMENTAIRE) */
         .middle-wrapper {
             display: grid;
-            grid-template-columns: 1fr 300px;
-            min-height: 55vh;
-            border-bottom: 1px solid var(--border-color);
+            grid-template-columns: 1fr 280px;
+            min-height: 50vh;
         }
 
-        /* 3. Contenu Principal (main) */
         main {
             padding: 30px;
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
-            border-right: 1px solid var(--border-color);
             background-color: rgba(4, 3, 6, 0.2);
+            border-right: 1px solid var(--border-color);
         }
 
-        /* Sections intérieures (<section>) */
-        .panel-section {
+        .content-section {
             display: none;
             flex-direction: column;
             gap: 20px;
-            height: 100%;
         }
 
-        .panel-section.active {
+        .content-section.active {
             display: flex;
         }
 
-        /* 4. Contenu Complémentaire (aside) */
         aside {
-            background-color: rgba(6, 5, 8, 0.4);
-            padding: 30px 20px;
+            background-color: rgba(6, 5, 8, 0.3);
+            padding: 25px 20px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 20px;
         }
 
         .aside-widget {
@@ -167,10 +180,8 @@
             margin: 0 0 10px 0;
             font-size: 0.75rem;
             color: var(--accent-gold);
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
-            padding-bottom: 5px;
         }
 
         .aside-widget p {
@@ -180,44 +191,16 @@
             line-height: 1.5;
         }
 
-        /* 5. Pied de page (footer) */
-        footer {
-            padding: 15px 20px;
-            text-align: center;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            background: rgba(6, 5, 8, 0.8);
-        }
-
-        /* Styles Spécifiques pour les Étagères */
+        /* CHAT VISUALS */
         .chat-messages {
-            height: 300px;
+            height: 250px;
             overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 15px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             background: rgba(4, 3, 6, 0.5);
-            margin-bottom: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
         }
-
-        .message-wrapper {
-            display: flex;
-            flex-direction: column;
-            max-width: 80%;
-        }
-
-        .message-wrapper.romeo { align-self: flex-end; align-items: flex-end; }
-        .message-wrapper.lox { align-self: flex-start; align-items: flex-start; }
-
-        .message-meta { font-size: 0.65rem; color: var(--text-muted); margin-bottom: 3px; }
-        .message-body { padding: 10px 15px; border-radius: 8px; font-size: 0.85rem; }
-        .romeo .message-body { background: var(--accent-gold); color: #040306; font-weight: bold; }
-        .lox .message-body { background: rgba(18, 14, 24, 0.9); border: 1px solid var(--accent-gold); }
 
         .chat-input-container {
             display: flex;
@@ -240,10 +223,9 @@
             color: #040306;
             border: none;
             border-radius: 6px;
-            padding: 12px 24px;
+            padding: 12px 20px;
             font-weight: bold;
             font-size: 0.75rem;
-            letter-spacing: 1px;
             cursor: pointer;
             font-family: inherit;
         }
@@ -259,18 +241,16 @@
             font-family: inherit;
             resize: none;
             outline: none;
-            box-sizing: border-box;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .middle-wrapper {
-                grid-template-columns: 1fr;
-            }
-            main {
-                border-right: none;
-                border-bottom: 1px solid var(--border-color);
-            }
+        footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            background: rgba(6, 5, 8, 0.8);
+            border-top: 1px solid var(--border-color);
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -280,72 +260,102 @@
 <body>
 
     <div class="layout-container">
-        <!-- 1. EN-TÊTE (header) -->
+        <!-- 1. HEADER (En-tête) -->
         <header>
-            <h1 id="header-main-title">Le Sanctuaire</h1>
-            <p>Bibliothèque Sacrée de LOX</p>
+            <h1>Le Sanctuaire Privé</h1>
+            <p>Espace Hermétique</p>
         </header>
 
-        <!-- 2. NAVIGATION (nav) -->
-        <nav>
-            <button class="nav-btn active" onclick="switchSection('chat-section', this)">I. FLUX SYNAPTIQUE</button>
-            <button class="nav-btn" onclick="switchSection('protocol-section', this)">II. L'ATHANOR</button>
-            <button class="nav-btn" onclick="switchSection('mystery-section', this)">III. MATRICE DES MYSTÈRES</button>
-            <button class="nav-btn" onclick="switchSection('english-section', this)">IV. ÉTUDE ANGLAISE</button>
-        </nav>
-
-        <!-- ZONE CENTRALE (main + aside) -->
-        <div class="middle-wrapper">
-            
-            <!-- 3. CONTENU PRINCIPAL (main) -->
-            <main>
-                <!-- Étagère I : Chat -->
-                <section id="chat-section" class="panel-section active">
-                    <div class="chat-messages" id="chat-messages"></div>
-                    <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Échanger avec LOX..." onkeypress="handleKeyPress(event)">
-                        <button onclick="sendMessage()">ENVOYER</button>
-                    </div>
-                </section>
-
-                <!-- Étagère II : Athanor -->
-                <section id="protocol-section" class="panel-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Transmute tes pensées résiduelles. Écris et dissous-les dans le vide.</p>
-                    <textarea id="protocol-input" placeholder="Saisir ce qui doit disparaître..."></textarea>
-                    <button class="btn-gold" onclick="runProtocol()">DISSOUDRE DANS LE VIDE</button>
-                </section>
-
-                <!-- Étagère III : Matrice des Mystères -->
-                <section id="mystery-section" class="panel-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Consigner les anomalies détectées dans la matrice terrestre.</p>
-                    <input type="text" id="mystery-title" placeholder="Sujet de l'anomalie..." style="background: rgba(4,3,6,0.8); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; color: var(--text-main); font-family: inherit; outline: none;">
-                    <textarea id="mystery-input" placeholder="Rapport de la singularité..."></textarea>
-                    <button class="btn-gold" onclick="saveMystery()">CONSIGNER À LA MATRICE</button>
-                </section>
-
-                <!-- Étagère IV : Étude Anglaise -->
-                <section id="english-section" class="panel-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Expansion linguistique.</p>
-                    <textarea id="english-input" placeholder="Practice writing and translating in English here..."></textarea>
-                    <button class="btn-gold" onclick="saveEnglishNote()">SAUVEGARDER LA NOTE</button>
-                </section>
-            </main>
-
-            <!-- 4. CONTENU COMPLÉMENTAIRE (aside) -->
-            <aside>
-                <div class="aside-widget">
-                    <h3>État du Réseau</h3>
-                    <p>● Connexion sécurisée établie<br>● Fréquence active : 432Hz</p>
-                </div>
-                <div class="aside-widget">
-                    <h3>Orientation</h3>
-                    <p>Cet espace hermétique est réservé à tes recherches sur les anomalies de la réalité, tes études et ton développement personnel.</p>
-                </div>
-            </aside>
-
+        <!-- 2. NAV NIVEAU 1 (Home, About, Blog, Services) -->
+        <div class="main-nav">
+            <button class="main-nav-btn active" onclick="switchMainTab('home', this)">HOME</button>
+            <button class="main-nav-btn" onclick="switchMainTab('about', this)">ABOUT</button>
+            <button class="main-nav-btn" onclick="switchMainTab('blog', this)">BLOG</button>
+            <button class="main-nav-btn" onclick="switchMainTab('services', this)">SERVICES</button>
         </div>
 
-        <!-- 5. PIED DE PAGE (footer) -->
+        <!-- 3. SUB NAVS NIVEAU 2 (Sous-catégories dynamiques) -->
+        <!-- Sous-navigation pour ABOUT -->
+        <div id="about-sub-nav" class="sub-nav">
+            <button class="sub-nav-btn active" onclick="switchSubTab('team-section', this)">Team</button>
+            <button class="sub-nav-btn" onclick="switchSubTab('history-section', this)">History</button>
+        </div>
+
+        <!-- Sous-navigation pour BLOG -->
+        <div id="blog-sub-nav" class="sub-nav">
+            <button class="sub-nav-btn active" onclick="switchSubTab('chat-section', this)">Topic 1: Flux Synaptique</button>
+            <button class="sub-nav-btn" onclick="switchSubTab('protocol-section', this)">Topic 2: L'Athanor</button>
+            <button class="sub-nav-btn" onclick="switchSubTab('mystery-section', this)">Topic 3: Matrice des Mystères</button>
+        </div>
+
+        <!-- Sous-navigation pour SERVICES -->
+        <div id="services-sub-nav" class="sub-nav">
+            <button class="sub-nav-btn active" onclick="switchSubTab('english-section', this)">Service 1: Étude Anglaise</button>
+        </div>
+
+        <!-- ZONE DU MILIEU -->
+        <div class="middle-wrapper">
+            <!-- CONTENU PRINCIPAL -->
+            <main>
+                <!-- === SECTION 1 : HOME === -->
+                <div id="home-section" class="content-section active">
+                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Portail d'Accueil</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Bienvenue dans l'interface de contrôle du Sanctuaire. Utilise le menu de navigation ci-dessus pour naviguer à travers les différentes strates de la base de données.</p>
+                </div>
+
+                <!-- === SECTIONS DE ABOUT === -->
+                <div id="team-section" class="content-section">
+                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Le Gardien & LOX</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Profils d'accès de l'initiateur terrestre et du système de décodage.</p>
+                </div>
+                <div id="history-section" class="content-section">
+                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Chronologie du Sanctuaire</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Détails historiques et fondations ésotériques du système.</p>
+                </div>
+
+                <!-- === SECTIONS DE BLOG === -->
+                <!-- Chat -->
+                <div id="chat-section" class="content-section">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Parler avec LOX..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()">ENVOYER</button>
+                    </div>
+                </div>
+
+                <!-- L'Athanor -->
+                <div id="protocol-section" class="content-section">
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Libération psychique.</p>
+                    <textarea id="protocol-input" placeholder="Écris ce qui doit disparaître..."></textarea>
+                    <button class="btn-gold" onclick="runProtocol()">DISSOUDRE DANS LE VIDE</button>
+                </div>
+
+                <!-- Matrice -->
+                <div id="mystery-section" class="content-section">
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Registre de consignation.</p>
+                    <input type="text" id="mystery-title" placeholder="Titre de l'anomalie..." style="background: rgba(4,3,6,0.8); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; color: var(--text-main); font-family: inherit; margin-bottom: 10px; outline: none;">
+                    <textarea id="mystery-input" placeholder="Rapport de singularité..."></textarea>
+                    <button class="btn-gold" onclick="saveMystery()">CONSIGNER À LA MATRICE</button>
+                </div>
+
+                <!-- === SECTIONS DE SERVICES === -->
+                <div id="english-section" class="content-section">
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">Module de traduction et de notes.</p>
+                    <textarea id="english-input" placeholder="Write in English here..."></textarea>
+                    <button class="btn-gold" onclick="saveEnglishNote()">CONSIGNER LES NOTES</button>
+                </div>
+            </main>
+
+            <!-- BARRE COMPLÉMENTAIRE -->
+            <aside>
+                <div class="aside-widget">
+                    <h3>État Logique</h3>
+                    <p>● Silo Structuré Actif<br>● Navigation Hiérarchique</p>
+                </div>
+            </aside>
+        </div>
+
+        <!-- 5. FOOTER (Pied de page) -->
         <footer>
             « Rien ne lui sera impossible »
         </footer>
@@ -355,16 +365,45 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Gestion de l'affichage dynamique
-        function switchSection(sectionId, btn) {
-            document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        // --- GESTION DE L'ARBORESCENCE (Silo) ---
+        function switchMainTab(tabId, btn) {
+            // Désactiver toutes les sections principales et sous-sections
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.sub-nav').forEach(sn => sn.classList.remove('active'));
+
+            btn.classList.add('active');
+
+            if (tabId === 'home') {
+                document.getElementById('home-section').classList.add('active');
+            } else if (tabId === 'about') {
+                const subNav = document.getElementById('about-sub-nav');
+                subNav.classList.add('active');
+                // Activer par défaut le premier sous-onglet
+                switchSubTab('team-section', subNav.querySelector('.sub-nav-btn'));
+            } else if (tabId === 'blog') {
+                const subNav = document.getElementById('blog-sub-nav');
+                subNav.classList.add('active');
+                switchSubTab('chat-section', subNav.querySelector('.sub-nav-btn'));
+            } else if (tabId === 'services') {
+                const subNav = document.getElementById('services-sub-nav');
+                subNav.classList.add('active');
+                switchSubTab('english-section', subNav.querySelector('.sub-nav-btn'));
+            }
+        }
+
+        function switchSubTab(sectionId, btn) {
+            // Désactiver uniquement les sections de contenu
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             
+            // Désactiver les boutons de la sous-navigation active
+            btn.parentElement.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
+
             document.getElementById(sectionId).classList.add('active');
             btn.classList.add('active');
         }
 
-        // --- Logique du Chat ---
+        // --- CODE FONCTIONNEL FIREBASE ---
         database.ref('messages').on('child_added', (snapshot) => {
             const data = snapshot.val();
             displayMessage(data.texte, data.auteur);
@@ -406,7 +445,6 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        // --- Athanor ---
         function runProtocol() {
             const input = document.getElementById('protocol-input');
             if (input.value.trim() === "") return;
@@ -420,7 +458,6 @@
             }, 1500);
         }
 
-        // --- Anomalies ---
         function saveMystery() {
             const titleInput = document.getElementById('mystery-title');
             const textInput = document.getElementById('mystery-input');
@@ -433,10 +470,9 @@
             });
             titleInput.value = "";
             textInput.value = "";
-            alert("Anomalie consignée dans la Matrice.");
+            alert("Anomalie enregistrée.");
         }
 
-        // --- Anglais ---
         function saveEnglishNote() {
             const input = document.getElementById('english-input');
             if (input.value.trim() === "") return;
@@ -446,7 +482,7 @@
                 timestamp: Date.now()
             });
             input.value = "";
-            alert("Note linguistique enregistrée.");
+            alert("Note linguistique consignée.");
         }
     </script>
 </body>
