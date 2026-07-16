@@ -14,7 +14,6 @@
             --border-color: rgba(168, 85, 247, 0.15);
             --text-main: #f3f0f7;
             --text-muted: #8b809a;
-            --glass-glow: rgba(168, 85, 247, 0.03);
         }
 
         body {
@@ -22,7 +21,6 @@
             padding: 0;
             font-family: 'Courier New', Courier, monospace, -apple-system, sans-serif;
             background-color: var(--bg-color);
-            /* Grille technologique fusionnée à un champ cosmique */
             background-image: 
                 radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.12) 0%, transparent 70%),
                 linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
@@ -53,13 +51,14 @@
             -webkit-backdrop-filter: blur(20px);
         }
 
-        /* Barre latérale - Les Étagères de LOX */
+        /* Barre latérale (Étagères) */
         .sidebar {
             background-color: rgba(6, 5, 8, 0.98);
             border-right: 1px solid var(--accent-gold);
             display: flex;
             flex-direction: column;
             padding: 30px 20px;
+            box-sizing: border-box;
         }
 
         .sidebar-header {
@@ -122,18 +121,20 @@
             text-shadow: 0 0 8px rgba(212, 175, 55, 0.4);
         }
 
-        /* Contenu principal */
+        /* Section Principale de Droite */
         .main-content {
             display: flex;
             flex-direction: column;
             height: 100%;
             background-color: rgba(4, 3, 6, 0.3);
+            overflow: hidden; /* Empêche le débordement global */
         }
 
         .content-header {
             padding: 25px 40px;
             border-bottom: 1px solid var(--border-color);
             background-color: rgba(12, 10, 16, 0.95);
+            flex-shrink: 0;
         }
 
         .content-header h2 {
@@ -154,11 +155,21 @@
             text-transform: uppercase;
         }
 
-        /* Étagère : Chat */
-        .chat-section {
-            display: flex;
+        /* Structure d'Affichage Dynamique */
+        .panel-section {
+            display: none; /* Caché par défaut */
             flex-direction: column;
             flex: 1;
+            overflow-y: auto;
+            box-sizing: border-box;
+        }
+
+        .panel-section.active {
+            display: flex; /* S'affiche quand actif */
+        }
+
+        /* Spécificité pour le Chat pour garder l'input en bas */
+        #chat-section {
             overflow: hidden;
         }
 
@@ -230,6 +241,7 @@
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 15px;
+            flex-shrink: 0;
         }
 
         .chat-input-container input {
@@ -281,24 +293,15 @@
             letter-spacing: 2px;
         }
 
-        /* Panneaux des autres Étagères */
-        .panel-section {
-            display: none;
+        /* Panneaux des autres sections */
+        .generic-panel {
             padding: 40px;
-            flex-direction: column;
             gap: 25px;
-            height: 100%;
-            box-sizing: border-box;
-            overflow-y: auto;
         }
 
-        .panel-section.active {
-            display: flex;
-        }
-
-        .panel-section textarea {
+        .generic-panel textarea {
             width: 100%;
-            height: 250px;
+            height: 200px;
             background-color: rgba(4, 3, 6, 0.8);
             border: 1px solid var(--border-color);
             border-radius: 14px;
@@ -313,7 +316,7 @@
             transition: all 0.3s ease;
         }
 
-        .panel-section textarea:focus {
+        .generic-panel textarea:focus {
             border-color: var(--accent-gold);
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
         }
@@ -339,7 +342,6 @@
             box-shadow: 0 8px 25px rgba(168, 85, 247, 0.4);
         }
 
-        /* Styles spécifiques de la Matrice des Mystères & Étude Anglaise */
         .mystery-history {
             display: flex;
             flex-direction: column;
@@ -366,6 +368,34 @@
             font-size: 0.9rem;
             color: var(--text-main);
             line-height: 1.6;
+        }
+
+        /* Version Mobile Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                height: 95vh;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--accent-gold);
+                padding: 15px;
+            }
+            .sidebar-header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            .nav-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .nav-btn {
+                padding: 8px 12px;
+                font-size: 0.7rem;
+                flex: 1 1 auto;
+                text-align: center;
+            }
         }
     </style>
 
@@ -395,8 +425,8 @@
                 <p id="section-desc">Flux synaptique sécurisé avec LOX</p>
             </div>
 
-            <!-- CHAT -->
-            <div id="chat-section" class="chat-section panel-section active">
+            <!-- CHAT (Étagère I) -->
+            <div id="chat-section" class="panel-section active">
                 <div class="chat-messages" id="chat-messages"></div>
                 <div class="typing-indicator" id="typing-indicator">LOX décode le flux cosmique...</div>
                 <div class="chat-input-container">
@@ -405,25 +435,25 @@
                 </div>
             </div>
 
-            <!-- PROTOCOLE (ATHANOR) -->
-            <div id="protocol-section" class="panel-section">
+            <!-- PROTOCOLE (Étagère II - ATHANOR) -->
+            <div id="protocol-section" class="panel-section generic-panel">
                 <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem; line-height: 1.6;">L'Athanor numérique transmute la matière psychique résiduelle. Écris les pensées de basse fréquence dont tu veux te libérer, puis initie la dissolution.</p>
                 <textarea id="protocol-input" placeholder="Écris ici ce qui doit retourner au néant cosmique..."></textarea>
                 <button class="btn-gold" onclick="runProtocol()">DISSOUDRE DANS LE VIDE</button>
             </div>
 
-            <!-- MATRICE DES MYSTÈRES -->
-            <div id="mystery-section" class="panel-section">
-                <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">Consigne ici tes observations sur les anomalies historiques, les mystères universels ou les géométries ésotériques. Tout est stocké dans notre base sacrée.</p>
-                <input type="text" id="mystery-title" placeholder="Titre de l'anomalie / du mystère..." style="background: rgba(4,3,6,0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none;">
+            <!-- MATRICE DES MYSTÈRES (Étagère III) -->
+            <div id="mystery-section" class="panel-section generic-panel">
+                <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem;">Consigne ici tes observations sur les anomalies historiques, les mystères universels ou les géométries ésotériques.</p>
+                <input type="text" id="mystery-title" placeholder="Titre de l'anomalie / du mystère..." style="background: rgba(4,3,6,0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px; color: var(--text-main); font-family: inherit; font-size: 0.95rem; outline: none; box-sizing: border-box;">
                 <textarea id="mystery-input" placeholder="Décris la singularité..." style="height: 150px;"></textarea>
                 <button class="btn-gold" onclick="saveMystery()">CONSIGNER À LA MATRICE</button>
                 <div class="mystery-history" id="mystery-history"></div>
             </div>
 
-            <!-- ÉTUDE ANGLAISE -->
-            <div id="english-section" class="panel-section">
-                <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem; line-height: 1.6;">Le langage est un code d'expansion pour tes projets futurs. Saisis tes notes ou exercices de traduction en anglais pour les sauvegarder et progresser.</p>
+            <!-- ÉTUDE ANGLAISE (Étagère IV) -->
+            <div id="english-section" class="panel-section generic-panel">
+                <p style="color: var(--text-muted); margin: 0; font-size: 0.9rem; line-height: 1.6;">Le langage est un code d'expansion pour tes projets futurs. Saisis tes notes ou exercices de traduction en anglais pour les sauvegarder.</p>
                 <textarea id="english-input" placeholder="Practice writing in English here... Translate your thoughts."></textarea>
                 <button class="btn-gold" onclick="saveEnglishNote()">ENREGISTRER MES NOTES</button>
             </div>
@@ -497,7 +527,6 @@
             const indicator = document.getElementById('typing-indicator');
             indicator.style.display = 'block';
 
-            // Une âme d'assistant loyal combinée aux inspirations New Age et techniques
             const systemInstruction = "Tu es LOX, l'assistant technologique et l'allié spirituel de Roméo. Tu es pragmatique, direct, dévoué et fidèle. Tu as une perspective New Age, s'exprimant avec clarté, sagesse cosmique et pragmatisme. Évite l'excès de jargon mais montre une profondeur philosophique.";
 
             const contents = chatHistory.slice(-10);
@@ -530,7 +559,7 @@
             }
         }
 
-        // SWITCH DES ÉTAGÈRES (ONGLETS)
+        // SWITCH DES ÉTAGÈRES
         function switchSection(sectionId, btn) {
             document.querySelectorAll('.panel-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -556,7 +585,7 @@
             }
         }
 
-        // ACTIONS : PURGE (ATHANOR)
+        // PURGE (ATHANOR)
         function runProtocol() {
             const input = document.getElementById('protocol-input');
             if (input.value.trim() === "") return;
@@ -571,7 +600,7 @@
             }, 2000);
         }
 
-        // ACTIONS : MATRICE DES MYSTÈRES
+        // MATRICE DES MYSTÈRES
         function saveMystery() {
             const titleInput = document.getElementById('mystery-title');
             const textInput = document.getElementById('mystery-input');
@@ -603,10 +632,10 @@
 
             card.appendChild(h4);
             card.appendChild(p);
-            container.prepend(card); // Les plus récents en premier
+            container.prepend(card);
         }
 
-        // ACTIONS : ÉTUDE ANGLAISE
+        // ÉTUDE ANGLAISE
         function saveEnglishNote() {
             const input = document.getElementById('english-input');
             const text = input.value.trim();
