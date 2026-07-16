@@ -83,3 +83,46 @@ footer {
     font-size: 0.6rem;
     color: var(--text-muted);
 }
+/* ==========================================================
+   ADAPTATION HORIZONTALE (STYLE DASHBOARD SAGE / ERP)
+   ========================================================== */
+
+@media (min-width: 768px) {
+    /* Élargir le conteneur principal pour occuper l'écran */
+    .app-container {
+        max-width: 95% !important;
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* 2 colonnes : la gauche plus large, la droite plus fine */
+        gap: 20px;
+        align-items: start;
+    }
+
+    /* Regrouper les modules de gauche (Caméra, Synthé, Capteurs) */
+    #home-section, #sensors-section {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr; /* Deux colonnes à l'intérieur */
+        gap: 15px;
+        grid-column: 1; /* Reste à gauche */
+    }
+
+    /* Forcer le chat à rester affiché sur le côté droit en permanence */
+    #chat-section {
+        display: block !important; /* Devient visible en continu */
+        grid-column: 2; /* Se place dans la colonne de droite */
+        position: sticky;
+        top: 60px;
+    }
+
+    /* Ajuster la hauteur du chat pour qu'il prenne toute la hauteur de l'écran */
+    #chat-section .module-box {
+        height: calc(100vh - 150px) !important;
+    }
+
+    /* Masquer la barre de navigation du bas sur grand écran car tout est visible en même temps */
+    .main-nav {
+        display: none !important;
+    }
+    body {
+        padding-bottom: 20px;
+    }
+}
