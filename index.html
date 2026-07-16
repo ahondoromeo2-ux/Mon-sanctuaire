@@ -1,37 +1,105 @@
-<!-- === 1. ACCUEIL (CONSOLE) === -->
-            <div id="home-section" class="content-section">
-                <div class="module-box">
-                    <div class="module-tag">STATUT_SYSTEME</div>
-                    <h3 class="module-title">Canal Exclusif : Roméo & LOX</h3>
-                    <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">Ce terminal est privé. Aucun autre utilisateur n'est autorisé.</p>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LOX OS — COCKPIT TACTIQUE</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/neon.css">
+</head>
+<body>
+
+    <header class="status-bar">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span id="global-status">LINK_SECURE</span>
+        </div>
+        <div class="system-title">LOX OS v4.0</div>
+    </header>
+
+    <main class="app-container">
+
+        <div id="home-section" class="content-section">
+            <div class="module-box">
+                <div class="module-tag">STATUT_SYSTEME</div>
+                <h3 class="module-title">Canal Exclusif : Roméo & LOX</h3>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin: 0;">Ce terminal est privé. Aucun autre utilisateur n'est autorisé.</p>
+            </div>
+            
+            <div class="module-box" style="border-left-color: var(--neon-magenta);">
+                <div class="module-tag">TACTICAL_CAM</div>
+                <h3 class="module-title">Scanner Optique Matriciel</h3>
+                <div style="position: relative; width: 100%; max-height: 200px; overflow: hidden; border: 1px solid var(--border-color); background: #000; margin-bottom: 10px; border-radius: 4px;">
+                    <video id="webcam" autoplay playsinline style="width: 100%; height: auto; transform: scaleX(-1); display: none;"></video>
+                    <div class="tactical-grid-overlay" id="cam-grid" style="display: none;"></div>
+                    <div id="cam-placeholder" style="text-align: center; padding: 40px 10px; color: var(--text-muted); font-size: 0.8rem;">SCANNER HORS LIGNE</div>
                 </div>
+                <button class="btn-action" style="width: 100%; border-color: var(--neon-magenta); color: var(--neon-magenta);" onclick="toggleCamera()">INITIALISER LE SCANNER</button>
+            </div>
+
+            <div class="module-box" style="border-left-color: var(--neon-cyan);">
+                <div class="module-tag">SYNTH_FREQ_MATRIX</div>
+                <h3 class="module-title">Synthétiseur Tactile Terrestre</h3>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Active le synthé puis glisse ton doigt dans la zone ci-dessous pour moduler le signal.</p>
+                <div id="synth-pad" style="width: 100%; height: 120px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--neon-cyan); touch-action: none; user-select: none;">
+                    ZONE DE MODULATION TACTILE
+                </div>
+                <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="toggleSynth()">ACTIVER LE SYNTHÉ</button>
+            </div>
+
+            <div class="module-box" style="border-left-color: var(--neon-yellow);">
+                <div class="module-tag">ALERTE_ROUGE</div>
+                <h3 class="module-title">Protocole de Surchauffe Système</h3>
+                <button class="btn-action" style="width: 100%; border-color: var(--neon-yellow); color: var(--neon-yellow);" onclick="triggerSelfDestruct()">LANCER LE PROTOCOLE</button>
+            </div>
+        </div>
+
+        <div id="sensors-section" class="content-section" style="display: none;">
+            <div class="module-box" style="border-left-color: var(--neon-magenta);">
+                <div class="module-tag">TELEMETRIE_COMPASS</div>
+                <h3 class="module-title">Radar d'Orientation Magnétique</h3>
+                <div class="compass-ring">
+                    <div id="needle" class="compass-needle"></div>
+                </div>
+                <p id="compass-data" style="text-align: center; font-family: monospace; font-size: 0.8rem; color: var(--neon-cyan);">AZIMUT : 0°</p>
+                <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="initCompass()">CALIBRER LES COMPAS</button>
+            </div>
+
+            <div class="module-box" style="border-left-color: var(--neon-green);">
+                <div class="module-tag">DECIBEL_METER</div>
+                <h3 class="module-title">Sonomètre Physique</h3>
+                <div class="db-bar-container">
+                    <div id="db-fill" class="db-bar-fill" style="width: 0%; height: 100%; background: var(--neon-green); transition: width 0.1s ease;"></div>
+                </div>
+                <p id="db-value" style="text-align: center; font-family: monospace; font-size: 0.8rem; color: var(--neon-green); margin-top: 10px;">VOLUME AMBIANT : 0 dB</p>
+                <button class="btn-action" style="width: 100%; border-color: var(--neon-green); color: var(--neon-green);" onclick="initAudioMeter()">ACTIVER CAPTEUR AUDIO</button>
+            </div>
+        </div>
+
+        <div id="chat-section" class="content-section" style="display: none;">
+            <div class="module-box" style="display: flex; flex-direction: column; height: 350px;">
+                <div class="module-tag">SECURE_COMM_ENCRYPTED</div>
+                <h3 class="module-title">Transmission</h3>
                 
-                <!-- NOUVEAU : VISION TACTIQUE CAMÉRA -->
-                <div class="module-box" style="border-left-color: var(--neon-magenta);">
-                    <div class="module-tag">TACTICAL_CAM</div>
-                    <h3 class="module-title">Scanner Optique Matriciel</h3>
-                    <div style="position: relative; width: 100%; max-height: 200px; overflow: hidden; border: 1px solid var(--border-color); background: #000; margin-bottom: 10px;">
-                        <video id="webcam" autoplay playsinline style="width: 100%; height: auto; transform: scaleX(-1); filter: sepia(1) hue-rotate(60deg) saturate(3) contrast(1.5); display: none;"></video>
-                        <div id="cam-placeholder" style="text-align: center; padding: 40px 10px; color: var(--text-muted); font-size: 0.8rem;">SCANNER HORS LIGNE</div>
+                <div id="chat-box" class="chat-messages" style="flex-grow: 1; overflow-y: auto; margin-bottom: 10px; padding: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.4); border-radius: 4px;">
                     </div>
-                    <button class="btn-action" style="width: 100%; border-color: var(--neon-magenta); color: var(--neon-magenta);" onclick="toggleCamera()">INITIALISER LE SCANNER</button>
-                </div>
 
-                <!-- NOUVEAU : THEREMIN TACTILE SUR ÉCRAN -->
-                <div class="module-box" style="border-left-color: var(--neon-cyan);">
-                    <div class="module-tag">SYNTH_FREQ_MATRIX</div>
-                    <h3 class="module-title">Synthétiseur Tactile Terrestre</h3>
-                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">Active le synthé puis glisse ton doigt dans la zone ci-dessous pour moduler le signal.</p>
-                    <div id="synth-pad" style="width: 100%; height: 120px; background: rgba(0, 240, 255, 0.05); border: 1px dashed var(--neon-cyan); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--neon-cyan); touch-action: none;">
-                        ZONE DE MODULATION TACTILE
-                    </div>
-                    <button class="btn-action" style="width: 100%; margin-top: 10px;" onclick="toggleSynth()">ACTIVER LE SYNTHÉ</button>
-                </div>
-
-                <!-- NOUVEAU : PROTOCOLE SÉCURITÉ URGENCE -->
-                <div class="module-box" style="border-left-color: var(--neon-yellow);">
-                    <div class="module-tag">ALERTE_ROUGE</div>
-                    <h3 class="module-title">Protocole de Surchauffe Système</h3>
-                    <button class="btn-action" style="width: 100%; border-color: var(--neon-yellow); color: var(--neon-yellow);" onclick="triggerSelfDestruct()">LANCER LE PROTOCOLE</button>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="chat-input" placeholder="Saisir commande..." style="flex-grow: 1; background: #04060b; border: 1px solid var(--border-color); color: #fff; padding: 10px; border-radius: 3px; font-family: monospace; font-size: 0.8rem;">
+                    <button class="btn-action" onclick="sendMessage()" style="padding: 0 15px;">ENVOYER</button>
                 </div>
             </div>
+        </div>
+
+    </main>
+
+    <nav class="main-nav">
+        <button class="main-nav-btn active" onclick="switchTab('home', this)">CONSOLE</button>
+        <button class="main-nav-btn" onclick="switchTab('sensors', this)">CAPTEURS</button>
+        <button class="main-nav-btn" onclick="switchTab('chat', this)">CHAT</button>
+    </nav>
+
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
