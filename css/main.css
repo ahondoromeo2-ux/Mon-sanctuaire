@@ -1,71 +1,22 @@
-/* LOX OS v5.0 — DASHBOARD CLEAN / SAAS */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+body { background: #f0f2f5; height: 100vh; }
 
-:root {
-    --bg-app: #f4f7fe;
-    --card-bg: #ffffff;
-    --text-main: #2d3748;
-    --text-muted: #718096;
-    --accent-purple: #805ad5;
-    --accent-orange: #ed8936;
-    --accent-teal: #38b2ac;
-    --accent-blue: #4299e1;
+.app-wrapper { display: flex; height: 100vh; }
+
+.sidebar { width: 240px; background: #fff; border-right: 1px solid #e0e0e0; padding: 20px; }
+.avatar { width: 50px; height: 50px; background: #ddd; border-radius: 50%; margin-bottom: 10px; }
+
+.content { flex: 1; padding: 20px; }
+.dashboard-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px; 
+    margin-top: 20px; 
 }
 
-body {
-    background-color: var(--bg-app);
-    color: var(--text-main);
-    font-family: 'Inter', sans-serif;
-    margin: 0;
-    padding-bottom: 80px;
-}
+.card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.card-pie { grid-column: span 1; }
+.card-bars { grid-column: span 2; }
+.card-tasks { grid-column: span 3; height: 200px; }
 
-/* Grille de Dashboard */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-/* Cartes (Widgets) */
-.card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-.card-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-bottom: 15px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Boutons style SaaS */
-.btn-saas {
-    background: var(--accent-purple);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-}
-
-/* Navigation Bas (Mobile Dashboard) */
-.nav-bottom {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    height: 65px;
-    background: white;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-}
+.chart-placeholder { height: 150px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; border-radius: 8px; color: #999; }
