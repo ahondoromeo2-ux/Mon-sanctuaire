@@ -2,52 +2,33 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/main.css">
-    <title>LOX OS Dashboard</title>
+    <title>LOX OS | HERO</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
-    <div class="app-wrapper">
+    <div id="lock-screen">
+        <h1>SYSTÈME VERROUILLÉ</h1>
+        <input type="password" id="code-input" placeholder="CODE D'ACTIVATION">
+        <button onclick="checkCode()">DÉVERROUILLER</button>
+    </div>
+
+    <div id="main-app" style="display:none;">
         <aside class="sidebar">
-            <div class="profile">
-                <div class="avatar"></div>
-                <h3>Roméo</h3>
-            </div>
-            <nav class="nav-menu">
-                <button class="nav-btn active">Tableau de bord</button>
-                <button class="nav-btn">Archive</button>
-                <button class="nav-btn">Documents</button>
+            <div class="profile">Roméo | LOX OS</div>
+            <nav>
+                <button onclick="show('dashboard')">Dashboard</button>
+                <button onclick="show('labo')">Labo Lox</button>
+                <button onclick="show('journal')">Journal</button>
+                <button onclick="show('bibliotheque')">Bibliothèque</button>
             </nav>
         </aside>
-
         <main class="content">
-            <header class="top-bar">
-                <h2>Vue d'ensemble</h2>
-            </header>
-            
-            <section class="dashboard-grid">
-                <!-- Widget 1: Graphique Circulaire -->
-                <div class="card card-pie">
-                    <div class="card-header">Données</div>
-                    <div class="chart-placeholder">Graphique Circulaire</div>
-                </div>
-                
-                <!-- Widget 2: Graphique Barres -->
-                <div class="card card-bars">
-                    <div class="card-header">Revenus</div>
-                    <div class="chart-placeholder">Histogramme</div>
-                </div>
-
-                <!-- Widget 3: Tâches / Source Mère -->
-                <div class="card card-tasks">
-                    <div class="card-header">Résumé des tâches</div>
-                    <div class="task-list">
-                        <div class="task-item">Projet : Le Lâche Prise</div>
-                        <div class="task-item">Progression : 60%</div>
-                    </div>
-                </div>
-            </section>
+            <section id="dashboard"><h1>VUE D'ENSEMBLE</h1><div class="card">Actualités Monde</div></section>
+            <section id="labo" style="display:none;"><h1>LABO LOX - ANALYSE</h1></section>
+            <section id="journal" style="display:none;"><h1>JOURNAL CRYPTO</h1><textarea id="j-input"></textarea><button onclick="crypt()">CODER</button></section>
+            <section id="bibliotheque" style="display:none;"><h1>BIBLIOTHÈQUE</h1></section>
         </main>
     </div>
-    <script src="js/app.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
