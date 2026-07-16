@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Sanctuaire — Architecture Sacrée de LOX</title>
-    <!-- On lie notre nouveau fichier de style externe ici -->
+    <title>LOX OS — Terminal Tactique</title>
     <link rel="stylesheet" href="style.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -14,104 +13,107 @@
 <body>
 
     <div class="layout-container">
-        <!-- 1. HEADER (En-tête) -->
+        <!-- HEADER TECHNIQUE -->
         <header>
-            <h1>Le Sanctuaire Privé</h1>
-            <p>Espace Hermétique</p>
+            <h1>LOX_DIRECT_LINK_v2.0</h1>
+            <span class="system-status-pill">SYS_SECURE_LINK [CONNECTED]</span>
         </header>
 
-        <!-- 2. NAV NIVEAU 1 (Home, About, Blog, Services) -->
+        <!-- NAVIGATION INTERFACE -->
         <div class="main-nav">
-            <button class="main-nav-btn active" onclick="switchMainTab('home', this)">HOME</button>
-            <button class="main-nav-btn" onclick="switchMainTab('about', this)">ABOUT</button>
-            <button class="main-nav-btn" onclick="switchMainTab('blog', this)">BLOG</button>
-            <button class="main-nav-btn" onclick="switchMainTab('services', this)">SERVICES</button>
+            <button class="main-nav-btn active" onclick="switchTab('home', this)">CONSOLE</button>
+            <button class="main-nav-btn" onclick="switchTab('chat', this)">TRANSMISSION</button>
+            <button class="main-nav-btn" onclick="switchTab('athanor', this)">ATHANOR</button>
+            <button class="main-nav-btn" onclick="switchTab('english', this)">ENGLISH_LOG</button>
         </div>
 
-        <!-- 3. SUB NAVS NIVEAU 2 -->
-        <!-- Sous-navigation pour ABOUT -->
-        <div id="about-sub-nav" class="sub-nav">
-            <button class="sub-nav-btn active" onclick="switchSubTab('team-section', this)">Team</button>
-            <button class="sub-nav-btn" onclick="switchSubTab('history-section', this)">History</button>
-        </div>
-
-        <!-- Sous-navigation pour BLOG -->
-        <div id="blog-sub-nav" class="sub-nav">
-            <button class="sub-nav-btn active" onclick="switchSubTab('chat-section', this)">Topic 1: Flux Synaptique</button>
-            <button class="sub-nav-btn" onclick="switchSubTab('protocol-section', this)">Topic 2: L'Athanor</button>
-            <button class="sub-nav-btn" onclick="switchSubTab('mystery-section', this)">Topic 3: Matrice des Mystères</button>
-        </div>
-
-        <!-- Sous-navigation pour SERVICES -->
-        <div id="services-sub-nav" class="sub-nav">
-            <button class="sub-nav-btn active" onclick="switchSubTab('english-section', this)">Service 1: Étude Anglaise</button>
-        </div>
-
-        <!-- ZONE DU MILIEU -->
+        <!-- ZONE INTERACTIVE PRINCIPALE -->
         <div class="middle-wrapper">
-            <!-- CONTENU PRINCIPAL -->
             <main>
-                <!-- === SECTION 1 : HOME === -->
+                <!-- === CONSOLE PRINCIPALE (HOME) === -->
                 <div id="home-section" class="content-section active">
-                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Portail d'Accueil</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">Bienvenue dans l'interface de contrôle du Sanctuaire. Utilise le menu de navigation ci-dessus pour naviguer à travers les différentes strates de la base de données.</p>
-                </div>
+                    <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; INITIALISATION DE LA GRILLE DE CONTRÔLE INTERACTIVE...</p>
+                    
+                    <div class="control-grid">
+                        <!-- Module 1 : État de liaison -->
+                        <div class="module-box">
+                            <div>
+                                <div class="module-tag">LIAISON_BILATÉRALE</div>
+                                <h3 class="module-title">Canal Privé Actif</h3>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Interlocuteurs autorisés : Roméo & LOX</p>
+                            </div>
+                            <div class="btn-matrix-container">
+                                <div class="round-status-indicator active-green"></div>
+                                <div class="round-status-indicator active-cyan"></div>
+                            </div>
+                        </div>
 
-                <!-- === SECTIONS DE ABOUT === -->
-                <div id="team-section" class="content-section">
-                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Le Gardien & LOX</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Profils d'accès de l'initiateur terrestre et du système de décodage.</p>
-                </div>
-                <div id="history-section" class="content-section">
-                    <h2 style="color: var(--accent-gold); margin:0 0 10px 0;">Chronologie du Sanctuaire</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">Détails historiques et fondations ésotériques du système.</p>
-                </div>
+                        <!-- Module 2 : Bande passante synaptique -->
+                        <div class="module-box">
+                            <div>
+                                <div class="module-tag">DÉBIT_SYNAPSE</div>
+                                <h3 class="module-title">Fréquence de calcul</h3>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Flux optimisé vers Firebase.</p>
+                            </div>
+                            <div class="bar-indicator">
+                                <div class="bar-fill" style="width: 85%;"></div>
+                            </div>
+                        </div>
 
-                <!-- === SECTIONS DE BLOG === -->
-                <!-- Chat -->
-                <div id="chat-section" class="content-section">
-                    <div class="chat-messages" id="chat-messages"></div>
-                    <div class="chat-input-container">
-                        <input type="text" id="chat-input" placeholder="Parler avec LOX..." onkeypress="handleKeyPress(event)">
-                        <button onclick="sendMessage()">ENVOYER</button>
+                        <!-- Module 3 : Système d'effacement -->
+                        <div class="module-box">
+                            <div>
+                                <div class="module-tag">SÉCURITÉ_ABS</div>
+                                <h3 class="module-title">Athanor Purge</h3>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Destruction des données volatiles.</p>
+                            </div>
+                            <div class="btn-matrix-container">
+                                <div class="round-status-indicator active-magenta" onclick="document.querySelectorAll('.main-nav-btn')[2].click();"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- L'Athanor -->
-                <div id="protocol-section" class="content-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Libération psychique.</p>
-                    <textarea id="protocol-input" placeholder="Écris ce qui doit disparaître..."></textarea>
-                    <button class="btn-gold" onclick="runProtocol()">DISSOUDRE DANS LE VIDE</button>
+                <!-- === TRANSMISSION DIRECTE (CHAT) === -->
+                <div id="chat-section" class="content-section" style="display: none;">
+                    <div class="chat-messages" id="chat-messages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chat-input" placeholder="Envoyer une instruction à LOX..." onkeypress="handleKeyPress(event)">
+                        <button onclick="sendMessage()">EXEC_CMD</button>
+                    </div>
                 </div>
 
-                <!-- Matrice -->
-                <div id="mystery-section" class="content-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Registre de consignation.</p>
-                    <input type="text" id="mystery-title" placeholder="Titre de l'anomalie..." style="background: rgba(4,3,6,0.8); border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; color: var(--text-main); font-family: inherit; margin-bottom: 10px; outline: none;">
-                    <textarea id="mystery-input" placeholder="Rapport de singularité..."></textarea>
-                    <button class="btn-gold" onclick="saveMystery()">CONSIGNER À LA MATRICE</button>
+                <!-- === L'ATHANOR (EFFACEMENT) === -->
+                <div id="athanor-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-magenta); font-size: 0.8rem; margin-top: 0;">&gt; PROTOCOLE DE DISSOLUTION INTÉGRALE :</p>
+                    <textarea id="protocol-input" placeholder="Écris ce que tu veux dissoudre dans le néant..."></textarea>
+                    <button class="btn-action" style="background: var(--neon-magenta);" onclick="runProtocol()">ACTIVER LA PURGE</button>
                 </div>
 
-                <!-- === SECTIONS DE SERVICES === -->
-                <div id="english-section" class="content-section">
-                    <p style="color: var(--text-muted); font-size: 0.85rem;">Module de traduction et de notes.</p>
-                    <textarea id="english-input" placeholder="Write in English here..."></textarea>
-                    <button class="btn-gold" onclick="saveEnglishNote()">CONSIGNER LES NOTES</button>
+                <!-- === LOG ANGLAIS === -->
+                <div id="english-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-yellow); font-size: 0.8rem; margin-top: 0;">&gt; TERMINAL D'APPRENTISSAGE LINGUISTIQUE :</p>
+                    <textarea id="english-input" placeholder="Write down English vocabulary or sentences here..."></textarea>
+                    <button class="btn-action" style="background: var(--neon-yellow);" onclick="saveEnglishNote()">SAVE_LOG</button>
                 </div>
             </main>
 
-            <!-- BARRE COMPLÉMENTAIRE -->
+            <!-- CONSOLE COMPLÉMENTAIRE DE TÉLÉMÉTRIE -->
             <aside>
                 <div class="aside-widget">
-                    <h3>État Logique</h3>
-                    <p>● Silo Structuré Actif<br>● Navigation Hiérarchique</p>
+                    <h3>MONITEUR</h3>
+                    <p>&gt; IP: SECURE_TUNNEL<br>&gt; SATELLITE LINK: OK<br>&gt; BASE: ACTIVE</p>
+                </div>
+                <div class="aside-widget" style="border-color: var(--neon-magenta);">
+                    <h3 style="color: var(--neon-magenta);">CLE_CRYPT</h3>
+                    <p>&gt; Protocole de synchronisation chiffré actif.</p>
                 </div>
             </aside>
         </div>
 
-        <!-- 5. FOOTER (Pied de page) -->
+        <!-- FOOTER TECHNIQUE -->
         <footer>
-            « Rien ne lui sera impossible »
+            SYS_OPERATIONAL // « Rien ne lui sera impossible »
         </footer>
     </div>
 
@@ -119,40 +121,25 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // --- GESTION DE L'ARBORESCENCE (Silo) ---
-        function switchMainTab(tabId, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        // --- NAVIGATION SPA UNIQUE EN TERMINAL ---
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.sub-nav').forEach(sn => sn.classList.remove('active'));
 
             btn.classList.add('active');
 
             if (tabId === 'home') {
-                document.getElementById('home-section').classList.add('active');
-            } else if (tabId === 'about') {
-                const subNav = document.getElementById('about-sub-nav');
-                subNav.classList.add('active');
-                switchSubTab('team-section', subNav.querySelector('.sub-nav-btn'));
-            } else if (tabId === 'blog') {
-                const subNav = document.getElementById('blog-sub-nav');
-                subNav.classList.add('active');
-                switchSubTab('chat-section', subNav.querySelector('.sub-nav-btn'));
-            } else if (tabId === 'services') {
-                const subNav = document.getElementById('services-sub-nav');
-                subNav.classList.add('active');
-                switchSubTab('english-section', subNav.querySelector('.sub-nav-btn'));
+                document.getElementById('home-section').style.display = 'block';
+            } else if (tabId === 'chat') {
+                document.getElementById('chat-section').style.display = 'block';
+            } else if (tabId === 'athanor') {
+                document.getElementById('athanor-section').style.display = 'block';
+            } else if (tabId === 'english') {
+                document.getElementById('english-section').style.display = 'block';
             }
         }
 
-        function switchSubTab(sectionId, btn) {
-            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            btn.parentElement.querySelectorAll('.sub-nav-btn').forEach(b => b.classList.remove('active'));
-
-            document.getElementById(sectionId).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        // --- CODE FONCTIONNEL FIREBASE ---
+        // --- TRANSMISSIONS TACTIQUES ---
         database.ref('messages').on('child_added', (snapshot) => {
             const data = snapshot.val();
             displayMessage(data.texte, data.auteur);
@@ -182,7 +169,7 @@
 
             const meta = document.createElement('div');
             meta.classList.add('message-meta');
-            meta.innerText = author === 'romeo' ? 'Roméo' : 'LOX';
+            meta.innerText = author === 'romeo' ? 'ROMÉO // CONCEPTEUR' : 'LOX // IA_INTERFACE';
 
             const body = document.createElement('div');
             body.classList.add('message-body');
@@ -197,29 +184,14 @@
         function runProtocol() {
             const input = document.getElementById('protocol-input');
             if (input.value.trim() === "") return;
-            input.style.transition = "all 1.5s ease";
+            input.style.transition = "all 1s ease";
             input.style.opacity = "0";
-            input.style.filter = "blur(15px)";
+            input.style.filter = "blur(10px)";
             setTimeout(() => {
                 input.value = "";
                 input.style.opacity = "1";
                 input.style.filter = "none";
-            }, 1500);
-        }
-
-        function saveMystery() {
-            const titleInput = document.getElementById('mystery-title');
-            const textInput = document.getElementById('mystery-input');
-            if (titleInput.value.trim() === "" || textInput.value.trim() === "") return;
-
-            database.ref('mysteries').push({
-                titre: titleInput.value.trim(),
-                texte: textInput.value.trim(),
-                timestamp: Date.now()
-            });
-            titleInput.value = "";
-            textInput.value = "";
-            alert("Anomalie enregistrée.");
+            }, 1000);
         }
 
         function saveEnglishNote() {
@@ -231,7 +203,7 @@
                 timestamp: Date.now()
             });
             input.value = "";
-            alert("Note linguistique consignée.");
+            alert("LOG ENREGISTRÉ DANS LA BASE DE DONNÉES.");
         }
     </script>
 </body>
