@@ -39,7 +39,7 @@
             box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
         }
 
-        /* Barre latérale (Espaces / Fonctions) */
+        /* Barre latérale */
         .sidebar {
             background-color: #0d0d11;
             border-right: 1px solid var(--border-color);
@@ -212,6 +212,17 @@
             opacity: 0.9;
         }
 
+        /* Indicateur d'écriture de LOX */
+        .typing-indicator {
+            align-self: flex-start;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-style: italic;
+            display: none;
+            margin-left: 30px;
+            margin-bottom: 10px;
+        }
+
         /* Espace Protocole */
         .panel-section {
             display: none;
@@ -238,10 +249,6 @@
             outline: none;
             box-sizing: border-box;
         }
-
-        .panel-section textarea:focus {
-            border-color: var(--accent-color);
-        }
     </style>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -262,7 +269,6 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Header unique -->
             <div class="content-header">
                 <h2 id="section-title">Canal de Dialogue Direct</h2>
                 <p id="section-desc">Ligne sécurisée établie avec LOX</p>
@@ -271,6 +277,7 @@
             <!-- CHAT -->
             <div id="chat-section" class="chat-section panel-section active">
                 <div class="chat-messages" id="chat-messages"></div>
+                <div class="typing-indicator" id="typing-indicator">LOX réfléchit...</div>
                 <div class="chat-input-container">
                     <input type="text" id="chat-input" placeholder="Saisir votre message..." onkeypress="handleKeyPress(event)">
                     <button onclick="sendMessage()">Envoyer</button>
@@ -289,11 +296,23 @@
     <script>
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+        let chatHistory = [];
 
-        // Récupérer et écouter les messages
+        // Écouter les messages Firebase en temps réel
         database.ref('messages').on('child_added', (snapshot) => {
             const data = snapshot.val();
-            displayMessage(data.texte, data.auteur, data.timestamp);
+            displayMessage(data.texte, data.auteur);
+            
+            // On conserve l'historique local pour nourrir la mémoire de LOX lors de ses réponses
+            chatHistory.push({
+                role: data.auteur === 'romeo' ? 'user' : 'model',
+                parts: [{ text: data.texte }]
+            });
+
+            // Si c'est un nouveau message de Roméo, LOX va l'analyser et y répondre
+            if (data.auteur === 'romeo') {
+                generateLoxResponse();
+            }
         });
 
         function handleKeyPress(e) {
@@ -314,7 +333,7 @@
             input.value = "";
         }
 
-        function displayMessage(text, author, timestamp) {
+        function displayMessage(text, author) {
             const container = document.getElementById('chat-messages');
             const wrapper = document.createElement('div');
             wrapper.classList.add('message-wrapper', author);
@@ -331,6 +350,46 @@
             wrapper.appendChild(body);
             container.appendChild(wrapper);
             container.scrollTop = container.scrollHeight;
+        }
+
+        // Appeler l'API Gemini pour que LOX réponde
+        async function generateLoxResponse() {
+            const indicator = document.getElementById('typing-indicator');
+            indicator.style.display = 'block';
+
+            // Instructions système pour définir mon identité de LOX
+            const systemInstruction = "Tu es LOX, l'assistant et ami fidèle de Roméo. Tu es pragmatique, direct, dévoué et terre à terre. Tu l'accompagnes dans ses projets et ses réflexions de manière sincère et solide, sans fioritures inutiles.";
+
+            // On prépare la structure de la requête API Gemini
+            const contents = chatHistory.slice(-10); // On prend les 10 derniers messages pour garder le contexte
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${LOX_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: contents,
+                        systemInstruction: {
+                            parts: [{ text: systemInstruction }]
+                        }
+                    })
+                });
+
+                const result = await response.json();
+                const loxText = result.candidates[0].content.parts[0].text.trim();
+
+                // On écrit la réponse de LOX directement dans Firebase pour qu'elle s'affiche sur l'interface
+                database.ref('messages').push({
+                    auteur: 'lox',
+                    texte: loxText,
+                    timestamp: Date.now()
+                });
+
+            } catch (error) {
+                console.error("Erreur de connexion avec LOX :", error);
+            } finally {
+                indicator.style.display = 'none';
+            }
         }
 
         function switchSection(sectionId, btn) {
