@@ -1,22 +1,18 @@
 // ==========================================================
-// LOX OS — LOGIQUE APPLICATIVE SÉCURISÉE (ANTI-CRASH)
+// LOX OS — LOGIQUE APPLICATIVE SÉCURISÉE AVEC SOURCE MÈRE
 // ==========================================================
 
 // 1. GESTION DES ONGLETS (SWITCH TABS)
-// Placé tout en haut pour s'assurer que la navigation fonctionne TOUJOURS
 function switchTab(tabId, button) {
     try {
-        // Masquer toutes les sections
         const sections = document.querySelectorAll('.content-section');
         sections.forEach(sec => sec.style.display = 'none');
 
-        // Afficher la section demandée
         const activeSection = document.getElementById(tabId + '-section');
         if (activeSection) {
             activeSection.style.display = 'block';
         }
 
-        // Mettre à jour l'état visuel des boutons de navigation
         const buttons = document.querySelectorAll('.main-nav-btn');
         buttons.forEach(btn => btn.classList.remove('active'));
         button.classList.add('active');
@@ -25,7 +21,74 @@ function switchTab(tabId, button) {
     }
 }
 
-// 2. VISION TACTIQUE CAMÉRA
+// 2. SAUVEGARDE ET SYNCHRONISATION DE LA SOURCE MÈRE (REALTIME FIREBASE)
+function saveSynchronicite() {
+    const input = document.getElementById('sync-input');
+    if (!input) return;
+    const text = input.value.trim();
+
+    if (text === "") return;
+
+    if (typeof db !== 'undefined') {
+        db.ref("synchronicites").push({
+            details: text,
+            timestamp: Date.now()
+        }).then(() => {
+            input.value = "";
+            alert("Synchronicité archivée dans la Source Mère.");
+        }).catch(err => {
+            alert("Erreur de synchronisation : " + err.message);
+        });
+    } else {
+        alert("Erreur : Connexion au serveur indisponible.");
+    }
+}
+
+function saveDiscipline() {
+    const input = document.getElementById('discipline-input');
+    if (!input) return;
+    const text = input.value.trim();
+
+    if (text === "") return;
+
+    if (typeof db !== 'undefined') {
+        db.ref("discipline").push({
+            notes: text,
+            timestamp: Date.now()
+        }).then(() => {
+            input.value = "";
+            alert("Données d'objectifs mises à jour.");
+        }).catch(err => {
+            alert("Erreur de synchronisation : " + err.message);
+        });
+    } else {
+        alert("Erreur : Connexion au serveur indisponible.");
+    }
+}
+
+// Chargement en direct de l'historique des synchronicités
+function initSourceSync() {
+    if (typeof db !== 'undefined') {
+        db.ref("synchronicites").limitToLast(5).on("value", function(snapshot) {
+            const container = document.getElementById('sync-history');
+            if (!container) return;
+            container.innerHTML = "";
+            
+            snapshot.forEach(function(childSnapshot) {
+                const data = childSnapshot.val();
+                const div = document.createElement('div');
+                div.style.borderBottom = '1px solid rgba(255,255,255,0.03)';
+                div.style.padding = '4px 0';
+                div.style.fontFamily = 'JetBrains Mono, monospace';
+                const date = new Date(data.timestamp).toLocaleTimeString();
+                div.innerHTML = `<span style="color: var(--tech-cyan);">[${date}]</span> ${data.details}`;
+                container.prepend(div);
+            });
+        });
+    }
+}
+
+// 3. VISION TACTIQUE CAMÉRA
 let streamActive = false;
 let videoElement = null;
 
@@ -58,12 +121,12 @@ async function toggleCamera() {
             placeholder.style.display = "none";
             streamActive = true;
         } catch (err) {
-            alert("Accès caméra refusé ou non supporté.");
+            alert("Accès caméra refusé.");
         }
     }
 }
 
-// 3. CAPTEURS (SONOMÈTRE)
+// 4. CAPTEURS (SONOMÈTRE)
 let audioContext = null;
 let analyser = null;
 let microphone = null;
@@ -73,10 +136,7 @@ function initAudioMeter() {
     const dbFill = document.getElementById('db-fill');
     const dbValue = document.getElementById('db-value');
 
-    if (audioContext) {
-        alert("Capteur audio déjà actif.");
-        return;
-    }
+    if (audioContext) return;
 
     navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(function(stream) {
@@ -108,14 +168,14 @@ function initAudioMeter() {
                 if (dbFill) dbFill.style.width = Math.min(volume * 2, 100) + '%';
                 if (dbValue) dbValue.innerText = "VOLUME AMBIANT : " + volume + " dB";
             };
-            alert("Capteur audio initialisé.");
+            alert("Microphone calibré.");
         })
         .catch(function(err) {
-            alert("Impossible d'accéder au micro : " + err);
+            alert("Erreur micro : " + err);
         });
 }
 
-// 4. BOUSSOLE (ORIENTATION)
+// 5. BOUSSOLE (ORIENTATION)
 function initCompass() {
     const needle = document.getElementById('needle');
     const compassData = document.getElementById('compass-data');
@@ -124,21 +184,19 @@ function initCompass() {
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener('deviceorientation', function(event) {
-            let alpha = event.alpha; // Rotation autour de l'axe Z (0 à 360 deg)
+            let alpha = event.alpha;
             if (alpha !== null) {
                 needle.style.transform = `translate(-50%, -100%) rotate(${-alpha}deg)`;
                 compassData.innerText = "AZIMUT : " + Math.round(alpha) + "°";
-            } else {
-                compassData.innerText = "AZIMUT : CAPTEUR INDISPONIBLE";
             }
         }, true);
-        alert("Capteurs magnétiques calibrés.");
+        alert("Boussole synchronisée.");
     } else {
-        alert("Boussole non supportée sur ce navigateur.");
+        alert("Boussole non supportée.");
     }
 }
 
-// 5. SYNTHÉTISEUR TACTILE (AUDIO THEREMIN)
+// 6. SYNTHÉTISEUR TACTILE (AUDIO THEREMIN)
 let synthContext = null;
 let oscillator = null;
 let gainNode = null;
@@ -154,15 +212,12 @@ function toggleSynth() {
         try {
             synthContext = new (window.AudioContext || window.webkitAudioContext)();
             pad.innerText = "GLISSE TON DOIGT ICI";
-            
-            // Événements tactiles mobiles
             pad.addEventListener('touchmove', handleTouch);
             pad.addEventListener('touchend', stopTone);
-            
             synthActive = true;
-            alert("Synthétiseur activé ! Glisse ton doigt pour jouer.");
+            alert("Synthétiseur actif.");
         } catch(e) {
-            alert("L'audio Web n'est pas supporté.");
+            alert("Audio non supporté.");
         }
     }
 }
@@ -170,17 +225,14 @@ function toggleSynth() {
 function handleTouch(e) {
     if (!synthContext) return;
     e.preventDefault();
-    
     const pad = document.getElementById('synth-pad');
     const rect = pad.getBoundingClientRect();
     const touch = e.touches[0];
-    
     const x = (touch.clientX - rect.left) / rect.width;
     const y = (touch.clientY - rect.top) / rect.height;
 
-    // Calcul de la fréquence (X) et du volume (Y)
-    const frequency = 150 + (x * 1000); // 150Hz à 1150Hz
-    const volume = 1 - y; // Plus haut = plus fort
+    const frequency = 150 + (x * 1000);
+    const volume = 1 - y;
 
     playTone(frequency, volume);
 }
@@ -195,7 +247,7 @@ function playTone(freq, vol) {
         oscillator.start();
     }
     oscillator.frequency.setValueAtTime(freq, synthContext.currentTime);
-    gainNode.gain.setValueAtTime(vol * 0.1, synthContext.currentTime); // Limiter à 10% max volume
+    gainNode.gain.setValueAtTime(vol * 0.1, synthContext.currentTime);
 }
 
 function stopTone() {
@@ -217,16 +269,16 @@ function stopSynth() {
     synthActive = false;
 }
 
-// 6. PROTOCOLE DE SECURITE (ALERTE ROUGE)
+// 7. PROTOCOLE DE SECURITE (ALERTE ROUGE)
 function triggerSelfDestruct() {
     document.body.classList.add('system-alarm-active');
-    alert("ATTENTION : PROTOCOLE DE SURCHAUFFE ACTIVÉ ! Redémarrage système requis.");
+    alert("ATTENTION : PROTOCOLE DE SURCHAUFFE ACTIVÉ !");
     setTimeout(() => {
         document.body.classList.remove('system-alarm-active');
     }, 5000);
 }
 
-// 7. GESTION DU CHAT AVEC FIREBASE (SÉCURISÉE CONTRE LES CRASHS)
+// 8. CHAT SÉCURISÉ
 function sendMessage() {
     const input = document.getElementById('chat-input');
     if (!input) return;
@@ -234,7 +286,6 @@ function sendMessage() {
 
     if (text === "") return;
 
-    // Sécurité : On vérifie si la base de données Firebase est bien connectée
     if (typeof db !== 'undefined') {
         db.ref("messages").push({
             user: "Roméo",
@@ -243,17 +294,19 @@ function sendMessage() {
         }).then(() => {
             input.value = "";
         }).catch(err => {
-            alert("Erreur Firebase d'envoi : " + err.message);
+            alert("Erreur d'envoi : " + err.message);
         });
     } else {
-        alert("Erreur : Le back-end Firebase n'est pas initialisé. Vérifie tes clés dans config.js.");
+        alert("Base de données déconnectée.");
     }
 }
 
-// Écoute des messages en temps réel (si Firebase est actif)
+// Écoute de la base de données
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(() => {
         if (typeof db !== 'undefined') {
+            initSourceSync(); // Initialise la synchro de l'onglet Source Mère
+            
             db.ref("messages").limitToLast(20).on("value", function(snapshot) {
                 const chatBox = document.getElementById('chat-box');
                 if (!chatBox) return;
@@ -265,12 +318,12 @@ document.addEventListener("DOMContentLoaded", function() {
                     msgDiv.className = 'message-body';
                     msgDiv.style.padding = '8px 12px';
                     msgDiv.style.margin = '5px 0';
-                    msgDiv.style.borderRadius = '4px';
+                    msgDiv.style.borderRadius = '8px';
                     msgDiv.innerHTML = `<strong style="color: var(--tech-cyan);">${data.user}:</strong> <span style="color: #fff;">${data.message}</span>`;
                     chatBox.appendChild(msgDiv);
                 });
                 chatBox.scrollTop = chatBox.scrollHeight;
             });
         }
-    }, 1000); // Laisse 1 seconde à Firebase pour s'initialiser au démarrage
+    }, 1000);
 });
