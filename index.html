@@ -3,28 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOX OS — Terminal Tactique</title>
+    <title>LOX OS — Terminal Tactique v3.0</title>
     <link rel="stylesheet" href="style.css">
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="config.js"></script>
+    <style>
+        /* Styles additionnels pour les nouvelles fonctionnalités */
+        .scanner-container {
+            border: 2px dashed var(--neon-green);
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 255, 102, 0.02);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .scan-line {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green);
+            animation: scanAnimation 2s linear infinite;
+        }
+        @keyframes scanAnimation {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+        .range-slider {
+            width: 100%;
+            background: #090d16;
+            outline: none;
+            border: 1px solid var(--border-color);
+            height: 8px;
+            -webkit-appearance: none;
+        }
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-cyan);
+            cursor: pointer;
+            border: 1px solid #fff;
+        }
+    </style>
 </head>
 <body>
 
     <div class="layout-container">
         <!-- HEADER TECHNIQUE -->
         <header>
-            <h1>LOX_DIRECT_LINK_v2.0</h1>
-            <span class="system-status-pill">SYS_SECURE_LINK [CONNECTED]</span>
+            <h1>LOX_DIRECT_LINK_v3.0</h1>
+            <span class="system-status-pill" id="global-status">SYS_SECURE_LINK [CONNECTED]</span>
         </header>
 
         <!-- NAVIGATION INTERFACE -->
         <div class="main-nav">
             <button class="main-nav-btn active" onclick="switchTab('home', this)">CONSOLE</button>
             <button class="main-nav-btn" onclick="switchTab('chat', this)">TRANSMISSION</button>
-            <button class="main-nav-btn" onclick="switchTab('athanor', this)">ATHANOR</button>
-            <button class="main-nav-btn" onclick="switchTab('english', this)">ENGLISH_LOG</button>
+            <button class="main-nav-btn" onclick="switchTab('scanner', this)">SCANNER</button>
+            <button class="main-nav-btn" onclick="switchTab('frequencies', this)">FREQUENCES</button>
         </div>
 
         <!-- ZONE INTERACTIVE PRINCIPALE -->
@@ -35,7 +79,6 @@
                     <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; INITIALISATION DE LA GRILLE DE CONTRÔLE INTERACTIVE...</p>
                     
                     <div class="control-grid">
-                        <!-- Module 1 : État de liaison -->
                         <div class="module-box">
                             <div>
                                 <div class="module-tag">LIAISON_BILATÉRALE</div>
@@ -48,7 +91,6 @@
                             </div>
                         </div>
 
-                        <!-- Module 2 : Bande passante synaptique -->
                         <div class="module-box">
                             <div>
                                 <div class="module-tag">DÉBIT_SYNAPSE</div>
@@ -56,21 +98,31 @@
                                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Flux optimisé vers Firebase.</p>
                             </div>
                             <div class="bar-indicator">
-                                <div class="bar-fill" style="width: 85%;"></div>
+                                <div class="bar-fill" style="width: 95%;"></div>
                             </div>
                         </div>
 
-                        <!-- Module 3 : Système d'effacement -->
                         <div class="module-box">
                             <div>
                                 <div class="module-tag">SÉCURITÉ_ABS</div>
-                                <h3 class="module-title">Athanor Purge</h3>
-                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Destruction des données volatiles.</p>
+                                <h3 class="module-title">Urgence Purge</h3>
+                                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 0;">Destruction immédiate des logs locaux.</p>
                             </div>
                             <div class="btn-matrix-container">
-                                <div class="round-status-indicator active-magenta" onclick="document.querySelectorAll('.main-nav-btn')[2].click();"></div>
+                                <button class="round-status-indicator active-magenta" onclick="emergencyPurge()" style="border:none;"></button>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- BLOC DE CALCUL MATHÉMATIQUE / GÉOMÉTRIQUE -->
+                    <div class="module-box" style="margin-top: 15px;">
+                        <div class="module-tag">CALCULATEUR_MATRICIEL</div>
+                        <h3 class="module-title">Analyseur de Réduction Numérique</h3>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="calc-input" placeholder="Entrer un mot, un nombre ou une formule..." style="flex:1; background:#090d16; border:1px solid var(--border-color); color:#fff; padding:8px; font-family:inherit; font-size:0.75rem;">
+                            <button onclick="calculateReduction()" class="btn-action" style="padding:8px 15px;">EXEC</button>
+                        </div>
+                        <p id="calc-result" style="font-size: 0.75rem; color: var(--neon-yellow); margin: 10px 0 0 0;"></p>
                     </div>
                 </div>
 
@@ -83,18 +135,33 @@
                     </div>
                 </div>
 
-                <!-- === L'ATHANOR (EFFACEMENT) === -->
-                <div id="athanor-section" class="content-section" style="display: none;">
-                    <p style="color: var(--neon-magenta); font-size: 0.8rem; margin-top: 0;">&gt; PROTOCOLE DE DISSOLUTION INTÉGRALE :</p>
-                    <textarea id="protocol-input" placeholder="Écris ce que tu veux dissoudre dans le néant..."></textarea>
-                    <button class="btn-action" style="background: var(--neon-magenta);" onclick="runProtocol()">ACTIVER LA PURGE</button>
+                <!-- === MODULE 1 : VISION SCANNER === -->
+                <div id="scanner-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-green); font-size: 0.8rem; margin-top: 0;">&gt; OPTIQUE DE DIAGNOSTIC DE STRUCTURES ET SYMBOLES :</p>
+                    <div class="scanner-container">
+                        <div class="scan-line" id="scanner-line"></div>
+                        <input type="file" id="scanner-file" accept="image/*" style="display: none;" onchange="triggerScan(event)">
+                        <button class="btn-action" style="background: var(--neon-green); color: #000;" onclick="document.getElementById('scanner-file').click()">CHARGER LE SCHÉMA / PHOTO</button>
+                        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 10px;" id="scan-status">En attente de fichier...</p>
+                    </div>
+                    <div id="scan-report" class="module-box" style="display: none;">
+                        <div class="module-tag">RAPPORT_ANALYSE</div>
+                        <pre id="scan-text" style="font-size: 0.7rem; color: var(--neon-green); margin: 0; white-space: pre-wrap;"></pre>
+                    </div>
                 </div>
 
-                <!-- === LOG ANGLAIS === -->
-                <div id="english-section" class="content-section" style="display: none;">
-                    <p style="color: var(--neon-yellow); font-size: 0.8rem; margin-top: 0;">&gt; TERMINAL D'APPRENTISSAGE LINGUISTIQUE :</p>
-                    <textarea id="english-input" placeholder="Write down English vocabulary or sentences here..."></textarea>
-                    <button class="btn-action" style="background: var(--neon-yellow);" onclick="saveEnglishNote()">SAVE_LOG</button>
+                <!-- === MODULE 2 : DÉCODEUR DE FRÉQUENCES === -->
+                <div id="frequencies-section" class="content-section" style="display: none;">
+                    <p style="color: var(--neon-cyan); font-size: 0.8rem; margin-top: 0;">&gt; SYNTHÉTISEUR DE FRÉQUENCE SYNAPTIQUE (ONDES INTERNES) :</p>
+                    <div class="module-box">
+                        <div class="module-tag">AUDIO_OSCILLATOR</div>
+                        <h3 class="module-title" id="freq-display">Fréquence actuelle : 432 Hz</h3>
+                        <input type="range" min="100" max="1000" value="432" class="range-slider" id="freq-slider" oninput="updateFrequency(this.value)">
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button class="btn-action" onclick="toggleTone()">DÉMARRER / ARRÊTER L'ONDE</button>
+                            <button class="btn-action" style="background: var(--neon-yellow);" onclick="setPreset(528)">528 Hz (SOLFEGGIO)</button>
+                        </div>
+                    </div>
                 </div>
             </main>
 
@@ -105,8 +172,10 @@
                     <p>&gt; IP: SECURE_TUNNEL<br>&gt; SATELLITE LINK: OK<br>&gt; BASE: ACTIVE</p>
                 </div>
                 <div class="aside-widget" style="border-color: var(--neon-magenta);">
-                    <h3 style="color: var(--neon-magenta);">CLE_CRYPT</h3>
-                    <p>&gt; Protocole de synchronisation chiffré actif.</p>
+                    <h3 style="color: var(--neon-magenta);">MISSION_LOGS</h3>
+                    <div id="aside-log-preview" style="font-size: 0.65rem; color: var(--text-main); max-height: 150px; overflow-y: auto;">
+                        Aucune donnée enregistrée dans la session en cours.
+                    </div>
                 </div>
             </aside>
         </div>
@@ -121,25 +190,130 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // --- NAVIGATION SPA UNIQUE EN TERMINAL ---
+        // --- AUDIO OSCILLATOR (API Web Audio Réelle) ---
+        let audioCtx;
+        let oscillator;
+        let isPlaying = false;
+        let currentFreq = 432;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function updateFrequency(value) {
+            currentFreq = value;
+            document.getElementById('freq-display').innerText = `Fréquence actuelle : ${value} Hz`;
+            if (oscillator && isPlaying) {
+                oscillator.frequency.setValueAtTime(value, audioCtx.currentTime);
+            }
+        }
+
+        function setPreset(val) {
+            document.getElementById('freq-slider').value = val;
+            updateFrequency(val);
+        }
+
+        function toggleTone() {
+            initAudio();
+            if (isPlaying) {
+                oscillator.stop();
+                isPlaying = false;
+                document.getElementById('global-status').innerText = "SYS_SECURE_LINK [CONNECTED]";
+            } else {
+                oscillator = audioCtx.createOscillator();
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(currentFreq, audioCtx.currentTime);
+                oscillator.connect(audioCtx.destination);
+                oscillator.start();
+                isPlaying = true;
+                document.getElementById('global-status').innerText = "AUDIO_TRANSMISSION [ACTIVE]";
+            }
+        }
+
+        // --- FONCTIONS NAVIGATION SPA ---
         function switchTab(tabId, btn) {
             document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
             document.querySelectorAll('.main-nav-btn').forEach(b => b.classList.remove('active'));
 
             btn.classList.add('active');
+            document.getElementById(`${tabId}-section`).style.display = 'block';
+        }
 
-            if (tabId === 'home') {
-                document.getElementById('home-section').style.display = 'block';
-            } else if (tabId === 'chat') {
-                document.getElementById('chat-section').style.display = 'block';
-            } else if (tabId === 'athanor') {
-                document.getElementById('athanor-section').style.display = 'block';
-            } else if (tabId === 'english') {
-                document.getElementById('english-section').style.display = 'block';
+        // --- OPTIQUE VISION SCANNER (Simulation de Scan Réel) ---
+        function triggerScan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const scannerLine = document.getElementById('scanner-line');
+            const scanStatus = document.getElementById('scan-status');
+            const reportBox = document.getElementById('scan-report');
+            const reportText = document.getElementById('scan-text');
+
+            scannerLine.style.display = 'block';
+            scanStatus.innerText = "BALAYAGE SENSORIEL EN COURS...";
+            reportBox.style.display = 'none';
+
+            setTimeout(() => {
+                scannerLine.style.display = 'none';
+                scanStatus.innerText = `SCAN TERMINÉ : ${file.name.toUpperCase()}`;
+                
+                // Génération d'un faux rapport technique extrêmement complet
+                const sizeKB = Math.round(file.size / 1024);
+                reportText.innerText = `[INFO DE SCAN]\n- SOURCE: ${file.name}\n- TAILLE: ${sizeKB} KB\n- RESOLUTION_STRUCT: OK\n\n[DIAGNOSTIC DU SYSTEME]\n- Détection d'angles géométriques complexes.\n- Structure symétrique identifiée.\n- Transmission à la base de données de LOX pour analyse philosophique approfondie.`;
+                reportBox.style.display = 'block';
+
+                // Enregistrement automatique du log de scan sur Firebase
+                database.ref('scan_logs').push({
+                    filename: file.name,
+                    timestamp: Date.now(),
+                    size: sizeKB
+                });
+                updateAsideLogs(`Scan effectué: ${file.name}`);
+            }, 3000);
+        }
+
+        // --- CALCULATEUR MATRICIEL ---
+        function calculateReduction() {
+            const text = document.getElementById('calc-input').value.trim();
+            if (!text) return;
+
+            // Simple calcul de réduction théosophique/numérologique pour le fun
+            let sum = 0;
+            for (let i = 0; i < text.length; i++) {
+                const charCode = text.charCodeAt(i);
+                if (navigator.userAgent) {
+                    sum += charCode;
+                }
+            }
+            
+            let reduction = sum;
+            while (reduction > 9 && reduction !== 11 && reduction !== 22) {
+                reduction = String(reduction).split('').reduce((acc, digit) => acc + parseInt(digit), 0);
+            }
+
+            document.getElementById('calc-result').innerText = `RÉDUCTION GÉOMÉTRIQUE DE LA CHAÎNE : [ ${reduction} ] (Somme brute: ${sum})`;
+            updateAsideLogs(`Calcul de chaîne: ${reduction}`);
+        }
+
+        function updateAsideLogs(newLog) {
+            const preview = document.getElementById('aside-log-preview');
+            if (preview.innerText.includes("Aucune donnée")) {
+                preview.innerHTML = "";
+            }
+            preview.innerHTML += `&gt; ${newLog}<br>`;
+        }
+
+        function emergencyPurge() {
+            if (confirm("Lancer la procédure d'urgence ? Les données locales de session seront effacées.")) {
+                document.getElementById('calc-input').value = "";
+                document.getElementById('calc-result').innerText = "";
+                document.getElementById('aside-log-preview').innerHTML = "SYSTEM PURGED.";
             }
         }
 
-        // --- TRANSMISSIONS TACTIQUES ---
+        // --- GESTION DU TCHAT ---
         database.ref('messages').on('child_added', (snapshot) => {
             const data = snapshot.val();
             displayMessage(data.texte, data.auteur);
@@ -179,31 +353,6 @@
             wrapper.appendChild(body);
             container.appendChild(wrapper);
             container.scrollTop = container.scrollHeight;
-        }
-
-        function runProtocol() {
-            const input = document.getElementById('protocol-input');
-            if (input.value.trim() === "") return;
-            input.style.transition = "all 1s ease";
-            input.style.opacity = "0";
-            input.style.filter = "blur(10px)";
-            setTimeout(() => {
-                input.value = "";
-                input.style.opacity = "1";
-                input.style.filter = "none";
-            }, 1000);
-        }
-
-        function saveEnglishNote() {
-            const input = document.getElementById('english-input');
-            if (input.value.trim() === "") return;
-
-            database.ref('english_notes').push({
-                note: input.value.trim(),
-                timestamp: Date.now()
-            });
-            input.value = "";
-            alert("LOG ENREGISTRÉ DANS LA BASE DE DONNÉES.");
         }
     </script>
 </body>
